@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(SurveyPrevRShinyV1223)
+library(SurveyPrevRShiny)
 
-test_check("SurveyPrevRShinyV1223")
+test_check("SurveyPrevRShiny")

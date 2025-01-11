@@ -1,4 +1,4 @@
-Package: SurveyPrevRShinyV1223
+Package: SurveyPrevRShiny
 Title: An Amazing Shiny App
 Version: 0.0.0.9000
 Authors@R: 
@@ -9,12 +9,16 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: What license is it under?
 Imports: 
+    attempt,
     config,
+    DT,
+    glue,
     golem,
+    htmltools,
     shiny
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

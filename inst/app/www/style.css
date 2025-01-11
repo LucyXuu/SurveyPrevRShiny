@@ -1,0 +1,179 @@
+/* Add space between icons and text in sidebar menu items */
+.fas.fa-globe {
+  margin-right: 6px;
+}
+.fas.fa-database {
+  margin-right: 7px;
+}
+.fas.fa-sliders {
+  margin-right: 6px;
+}
+.fas.fa-chart-line {
+  margin-right: 6px;
+}
+.fas.fa-earth-americas {
+  margin-right: 6px;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', sans-serif;
+}
+.module-title {
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 10px;
+  text-align: left;
+  margin-bottom: 20px;
+} 
+
+
+/*
+landing page style
+*/
+
+.welcome-note {
+  border-left: 5px solid #2196F3; /* Blue left border */
+  background-color: #e9f4e7; /* Light green background */
+  padding: 20px; /* Slightly larger padding for better spacing */
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  font-size: 18px; /* Larger font size for improved readability */
+  text-align: left; /* Left align the text */
+}
+
+.welcome-note h4 {
+  margin-top: 0;
+  color: #333;
+  font-size: 24px; /* Increased size for heading */
+  text-align: left; /* Left align the heading */
+}
+
+.welcome-note p {
+  margin-bottom: 0;
+  text-align: left; /* Left align the paragraph text */
+}
+
+.official-link {
+  color: blue; /* Blue for official site links */
+  text-decoration: none; /* Optional: Removes underline */
+  text-align: left; /* Left align the link */
+}
+
+.instruction-link {
+  color: #11be06; /* Green for instruction links */
+  text-decoration: none; /* Optional: Removes underline */
+  text-align: left; /* Left align the link */
+}
+
+.instructions {
+  font-size: 16px; /* Larger font size */
+  text-align: left; /* Left align the instruction text */
+}
+
+.instructions li {
+  margin-bottom: 5px; /* Spacing between items */
+  text-align: left; /* Left align each list item */
+}
+
+.instructions b {
+  font-weight: bold;
+}
+
+.box0 .box-header > .box-title {
+  background: #666666;
+  text-align: left; /* Left align the box title */
+}
+
+.box0 .box.box-solid.box-primary > .box-header {
+  background: #666666;
+  text-align: left; /* Left align the box header */
+}
+
+.box0 .box.box-solid.box-primary {
+  border: 1px solid #666666;
+}
+
+.box1 .box-header > .box-title {
+  background: #9FDA3AFF;
+  text-align: left; /* Left align the box title */
+}
+
+.box1 .box.box-solid.box-primary > .box-header {
+  background: #9FDA3AFF;
+  text-align: left; /* Left align the box header */
+}
+
+.box1 .box.box-solid.box-primary {
+  border: 1px solid #9FDA3AFF;
+}
+
+.box2 .box-header > .box-title {
+  background: #4AC16DFF;
+  text-align: left; /* Left align the box title */
+}
+
+.box2 .box.box-solid.box-primary > .box-header {
+  background: #4AC16DFF;
+  text-align: left; /* Left align the box header */
+}
+
+.box2 .box.box-solid.box-primary {
+  border: 1px solid #4AC16DFF;
+}
+
+.box3 .box-header > .box-title {
+  background: #1FA187FF;
+  text-align: left; /* Left align the box title */
+}
+
+.box3 .box.box-solid.box-primary > .box-header {
+  background: #1FA187FF;
+  text-align: left; /* Left align the box header */
+}
+
+.box3 .box.box-solid.box-primary {
+  border: 1px solid #1FA187FF;
+}
+
+.box4 .box-header > .box-title {
+  background: #277F8EFF;
+  text-align: left; /* Left align the box title */
+}
+
+.box4 .box.box-solid.box-primary > .box-header {
+  background: #277F8EFF;
+  text-align: left; /* Left align the box header */
+}
+
+.box4 .box.box-solid.box-primary {
+  border: 1px solid #277F8EFF;
+}
+
+/* Apply styles to all modals */
+.modal {
+  font-size: 1.1em;  /* Larger font size */
+}
+
+.modal-header {
+  background-color: #f2f2f2;  /* Light gray header */
+  padding: 10px;  /* Additional padding */
+}
+
+.modal-body {
+  background-color: white;  /* White body */
+  padding: 10px;  /* Consistent padding */
+}
+
+.modal-footer {
+  background-color: #f2f2f2;  /* Light gray footer */
+}
+
+.modal-dialog {
+  border-radius: 10px;  /* Rounded corners */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Soft shadow */
+}
+
+
+
+.nav-tabs {font-size: 1.1em;} 
+
+.navbar .navbar-nav {font-size: 1.15em;}

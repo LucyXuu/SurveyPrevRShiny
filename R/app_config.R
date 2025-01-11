@@ -9,7 +9,7 @@
 #'
 #' @noRd
 app_sys <- function(...) {
-  system.file(..., package = "SurveyPrevRShinyV1223")
+  system.file(..., package = "SurveyPrevRShiny")
 }
 
 

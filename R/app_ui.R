@@ -114,30 +114,30 @@ app_ui <- function(request) {
                                       shinydashboard::tabItem(tabName = "get_start",
                                                               mod_landing_page_ui("landing_page_1")), # Use the module UI here
                                       shinydashboard::tabItem(tabName = "country_spec",
-                                                              mod_country_specify_ui("country_specify_1"))#, # Use the module UI here
-                                      # shinydashboard::tabItem(tabName = "data_upload",
-                                      #                         mod_survey_dat_input_ui("survey_dat_input_1")),
-                                      # shinydashboard::tabItem(tabName = "model_fit",
-                                      #                         mod_model_selection_ui("model_selection_1")),
-                                      # shinydashboard::tabItem(tabName = "res_tab",
-                                      #                         mod_result_tabulate_ui("result_tabulate_1")),
-                                      # # Adding individual content for each subtab
-                                      # shinydashboard::tabItem(tabName = "res_prev_map",
-                                      #                         mod_res_visual_prev_map_ui("res_visual_prev_map_1")), # Content for Prev Map subtab
-                                      # shinydashboard::tabItem(tabName = "res_compare_map",
-                                      #                         mod_res_visual_multiple_maps_ui("res_visual_multiple_maps_1")), # Content for Map Comparison subtab
-                                      # shinydashboard::tabItem(tabName = "res_scatter",
-                                      #                         mod_res_visual_scatter_ui("res_visual_scatter_1")), # Content for Comparison Scatter subtab
-                                      # shinydashboard::tabItem(tabName = "res_ridge",
-                                      #                         mod_res_visual_ridge_ui("res_visual_ridge_1")), # Content for ridge plot subtab
-                                      # shinydashboard::tabItem(tabName = "report_tab",
-                                      #                         mod_report_preparation_ui("report_preparation_1")), # Report generation
-                                      # shinydashboard::tabItem(tabName = "indicator_in_app",
-                                      #                         mod_indicator_in_app_ui("indicator_in_app_1")), # Indicator supported in the app
-                                      # shinydashboard::tabItem(tabName = "indicator_dictionary",
-                                      #                         mod_indicator_dictionary_ui("indicator_dictionary_1")), # Indicator Dictionary
-                                      # shinydashboard::tabItem(tabName = "DHS_API_est",
-                                      #                         mod_DHS_API_est_ui("DHS_API_est_1")) # Indicator Dictionary
+                                                              mod_country_specify_ui("country_specify_1")), # Use the module UI here
+                                      shinydashboard::tabItem(tabName = "data_upload",
+                                                              mod_survey_dat_input_ui("survey_dat_input_1")),
+                                      shinydashboard::tabItem(tabName = "model_fit",
+                                                              mod_model_selection_ui("model_selection_1")),
+                                      shinydashboard::tabItem(tabName = "res_tab",
+                                                              mod_result_tabulate_ui("result_tabulate_1")),
+                                      # Adding individual content for each subtab
+                                      shinydashboard::tabItem(tabName = "res_prev_map",
+                                                              mod_res_visual_prev_map_ui("res_visual_prev_map_1")), # Content for Prev Map subtab
+                                      shinydashboard::tabItem(tabName = "res_compare_map",
+                                                              mod_res_visual_multiple_maps_ui("res_visual_multiple_maps_1")), # Content for Map Comparison subtab
+                                      shinydashboard::tabItem(tabName = "res_scatter",
+                                                              mod_res_visual_scatter_ui("res_visual_scatter_1")), # Content for Comparison Scatter subtab
+                                      shinydashboard::tabItem(tabName = "res_ridge",
+                                                              mod_res_visual_ridge_ui("res_visual_ridge_1")), # Content for ridge plot subtab
+                                      shinydashboard::tabItem(tabName = "report_tab",
+                                                              mod_report_preparation_ui("report_preparation_1")), # Report generation
+                                      shinydashboard::tabItem(tabName = "indicator_in_app",
+                                                              mod_indicator_in_app_ui("indicator_in_app_1")), # Indicator supported in the app
+                                      shinydashboard::tabItem(tabName = "indicator_dictionary",
+                                                              mod_indicator_dictionary_ui("indicator_dictionary_1")), # Indicator Dictionary
+                                      shinydashboard::tabItem(tabName = "DHS_API_est",
+                                                              mod_DHS_API_est_ui("DHS_API_est_1")) # Indicator Dictionary
                                     )
                                   ),
                                   tags$head(tags$style(HTML("

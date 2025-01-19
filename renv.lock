@@ -5,6 +5,10 @@
       {
         "Name": "CRAN",
         "URL": "https://packagemanager.posit.co/cran/latest"
+      },
+      {
+        "Name": "INLA",
+        "URL": "https://inla.r-inla-download.org/R/testing"
       }
     ]
   },
@@ -59,7 +63,8 @@
     "INLA": {
       "Package": "INLA",
       "Version": "24.12.11",
-      "Source": "unknown",
+      "Source": "Repository",
+      "Repository": "INLA",
       "Requirements": [
         "Matrix",
         "MatrixModels",
@@ -91,7 +96,7 @@
     },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-61",
+      "Version": "7.3-60",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -102,11 +107,11 @@
         "stats",
         "utils"
       ],
-      "Hash": "0cafd6f0500e5deba33be22c46bf6055"
+      "Hash": "a56a6365b3fa73293ea8d084be0d9bb0"
     },
     "Matrix": {
       "Package": "Matrix",
-      "Version": "1.7-1",
+      "Version": "1.6-1.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -119,7 +124,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "5122bb14d8736372411f955e1b16bc8a"
+      "Hash": "1a00d4828f33a9d690806e98bd17150c"
     },
     "MatrixModels": {
       "Package": "MatrixModels",

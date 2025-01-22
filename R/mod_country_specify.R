@@ -118,7 +118,7 @@ mod_country_specify_ui <- function(id) {
     )
   )
 }
-    
+
 #' country_specify Server Functions
 #'
 #' @noRd 
@@ -390,14 +390,13 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
     
     # update country
     
-    ### set country list (for WHO version, only selected countries)
     observeEvent(CountryInfo$WHO_version(),{
       
       if(is.null(CountryInfo$WHO_version())){return(NULL)}
       
       
       ### Internal version, all countries
-      if(!CountryInfo$WHO_version()){
+      if(!CountryInfo$WHO_version() && !CountryInfo$MICS_version()){
         country_name_list <- sort(DHS.country.meta[['CountryName']])
         updateSelectInput(inputId = "country", choices = c('',country_name_list))
       }
@@ -408,8 +407,32 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         updateSelectInput(inputId = "country", choices = c('',country_name_list))
       }
       
+      if(CountryInfo$MICS_version()){
+        country_name_list <- MICS.app.countries
+        updateSelectInput(inputId = "country", choices = c('',country_name_list), selected = "Nigeria")
+      }
+      
       
     })
+    
+    
+    
+    # if (!is.null(CountryInfo$WHO_version()) && CountryInfo$WHO_version()) {
+    #   country_name_list <- WHO.app.countries
+    #   updateSelectInput(inputId = "country", choices = c('', country_name_list))
+    #   return()
+    # }
+    # 
+    # # MICS version
+    # if (!is.null(CountryInfo$MICS_version()) && CountryInfo$MICS_version()) {
+    #   country_name_list <- MICS.app.countries
+    #   updateSelectInput(inputId = "country", choices = c('', country_name_list), selected = "Nigeria")
+    #   return()
+    # }
+    # 
+    # #normal version is not specified
+    # country_name_list <- sort(DHS.country.meta[['CountryName']])
+    # updateSelectInput(inputId = "country", choices = c('', country_name_list))
     
     observe({
       
@@ -425,9 +448,26 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
     })
     
-    # update indicator group
-    surveyPrev_ind_list <- ref_tab_all
-    updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(ref_tab_all$Topic),decreasing = F))
+    #################################################################################
+    #################################################################################
+    # update indicator group for mics
+    #################################################################################
+    #################################################################################
+    
+    if(TRUE){
+      surveyPrev_ind_list <- ref_tab_mics
+    }
+    
+    #################################################################################
+    #################################################################################
+    # update indicator group for normal non-mic
+    #################################################################################
+    #################################################################################
+    if(FALSE){
+      surveyPrev_ind_list <- ref_tab_all
+    }
+    
+    updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
     
     
     ### preload Zambia
@@ -491,8 +531,8 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
       #req(CountryInfo$WHO_version())
       
-      
-      if (!all(sapply(CountryInfo$svy_dat_list(), is.null))| !is.null(CountryInfo$svy_GPS_dat()) ) {
+      #!is.null(CountryInfo)
+      if (!is.null(CountryInfo$svy_analysis_dat()) | !all(sapply(CountryInfo$svy_dat_list(), is.null))| !is.null(CountryInfo$svy_GPS_dat()) ) {
         #if (input$country != CountryInfo$country()) {
         
         
@@ -522,9 +562,13 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         CountryInfo$country(input$country)
         CountryInfo$svyYear_selected('')
         
-        CountryInfo$svyYear_list(get_survey_year(input$country))
-        updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
-        
+        if(CountryInfo$MICS_version()){
+          CountryInfo$svyYear_list(c("2021"))
+          updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
+        } else {
+          CountryInfo$svyYear_list(get_survey_year(input$country))
+          updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
+        }
         
         
       }
@@ -538,7 +582,9 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
       if(CountryInfo$WHO_version()){
         country_name_list <- WHO.app.countries
-      }else{
+      }else if (CountryInfo$MICS_version()){
+        country_name_list <- c("Nigeria")
+      }else {
         country_name_list <- sort(DHS.country.meta[['CountryName']])
       }
       
@@ -562,10 +608,16 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         
         
         ### Update country info
-        CountryInfo$svyYear_list(get_survey_year(input$country))
-        CountryInfo$svyYear_selected('')
-        updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
-        
+        if(CountryInfo$MICS_version()){
+          CountryInfo$svyYear_list(c("2021"))
+          CountryInfo$svyYear_selected('')
+          updateSelectInput(inputId = "Svy_year", 
+                            choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
+        } else {
+          CountryInfo$svyYear_list(get_survey_year(input$country))
+          CountryInfo$svyYear_selected('')
+          updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
+        }
         
       } else {
         # User did not confirm, reset the selectInput to the last valid value
@@ -588,7 +640,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       if (input$Svy_year == CountryInfo$svyYear_selected()) {return()}
       
       
-      if (!all(sapply(CountryInfo$svy_dat_list(), is.null))| !is.null(CountryInfo$svy_GPS_dat()) ) {
+      if (!is.null(CountryInfo$svy_analysis_dat()) | !all(sapply(CountryInfo$svy_dat_list(), is.null))| !is.null(CountryInfo$svy_GPS_dat()) ) {
         #if (input$country != CountryInfo$country()) {
         
         shinyWidgets::confirmSweetAlert(
@@ -641,6 +693,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
     })
     
+    shinyjs::show("Svy_ind_group")
     observeEvent(input$change_svy_yr_confirm, {
       
       if ((input$change_svy_yr_confirm)) {
@@ -732,7 +785,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         
         current_svy_ind_group_selection(input$Svy_ind_group)  # Update the valid selection to the new value
         
-        group_ind_list <- ref_tab_all %>%
+        group_ind_list <- surveyPrev_ind_list %>%
           subset( Topic==input$Svy_ind_group)
         
         indicator_choices_vector <- setNames(group_ind_list$ID, group_ind_list$Description)
@@ -755,13 +808,13 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         current_svy_ind_group_selection(input$Svy_ind_group)  # Update the valid selection to the new value
         message(paste0('changed to ',current_svy_ind_group_selection()))
         updateSelectInput(session, "Svy_ind_group", selected = current_svy_ind_group_selection(),
-                          choices =sort(unique(ref_tab_all$Topic),decreasing = F))
+                          choices =sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
         
         AnalysisInfo$reset_results()
         CountryInfo$reset_dat()
         
         
-        group_ind_list <- ref_tab_all %>%
+        group_ind_list <- surveyPrev_ind_list %>%
           subset( Topic==input$Svy_ind_group)
         
         indicator_choices_vector <- setNames(group_ind_list$ID, group_ind_list$Description)
@@ -776,7 +829,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       } else {
         # User did not confirm, reset the selectInput to the last valid value
         updateSelectInput(session, "Svy_ind_group", selected = current_svy_ind_group_selection(),
-                          choices =sort(unique(ref_tab_all$Topic),decreasing = F))
+                          choices =sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
       }
     })
     
@@ -1109,9 +1162,9 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
     
   })
 }
-    
+
 ## To be copied in the UI
 # mod_country_specify_ui("country_specify_1")
-    
+
 ## To be copied in the server
 # mod_country_specify_server("country_specify_1")

@@ -22,6 +22,7 @@ CountryInfo <- R6::R6Class(
     
     use_basemap = NULL,
     WHO_version = NULL, ### whether to use WHO version of the app (difference in countries)
+    MICS_version = NULL, ### use mics version with data loaded in app, so users do not need to upload .zip file
     shapefile_source = NULL, ### WHO-preload, WHO-download, GADM-preload, GADM-download
     
     legend_color_reverse = NULL, ### whether to reverse the color scheme on the legend of leaflet plot (fix bug)
@@ -63,6 +64,7 @@ CountryInfo <- R6::R6Class(
       
       self$use_basemap <- reactiveVal(NULL)
       self$WHO_version <- reactiveVal(NULL)
+      self$MICS_version <- reactiveVal(NULL)
       self$shapefile_source <- reactiveVal(NULL)
       
       self$legend_color_reverse <- reactiveVal(NULL)

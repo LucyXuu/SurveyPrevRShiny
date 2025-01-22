@@ -23,21 +23,29 @@ app_server <- function(input, output, session) {
   
   ### WHO/non-WHO version related parameters
   
-  # non-WHO version
-  
-  if(TRUE){
+  # non-WHO non-MICS version
+  if(FALSE){
     CountryInfo$WHO_version(F)
+    CountryInfo$MICS_version(F)
     CountryInfo$use_basemap('OSM')
     CountryInfo$shapefile_source('GADM-preload') # CountryInfo$shapefile_source('GADM-download')
   }
   
-  
   # WHO version
-  
   if(FALSE){
+    CountryInfo$WHO_version(T)
+    CountryInfo$MICS_version(F)
     CountryInfo$use_basemap('None')
     CountryInfo$shapefile_source('WHO-preload')
-    ### docker WHO : CountryInfo$shapefile_source('WHO-download')
+    ### docker WHO : CountryInfo$shapefile_source('WHO-preload')
+  }
+  
+  # MICS version
+  if(TRUE){
+    CountryInfo$MICS_version(T)
+    CountryInfo$WHO_version(F)
+    CountryInfo$use_basemap('OSM')
+    CountryInfo$shapefile_source('GADM-preload')
   }
   
   
@@ -58,12 +66,12 @@ app_server <- function(input, output, session) {
   mod_model_selection_server("model_selection_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
   mod_result_tabulate_server("result_tabulate1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
   mod_report_preparation_server("report_preparation_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
-  # 
-  # mod_res_visual_prev_map_server("res_visual_prev_map_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
-  # mod_res_visual_multiple_maps_server("res_visual_multiple_maps_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
-  # 
-  # mod_res_visual_scatter_server("res_visual_scatter_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
-  # mod_res_visual_ridge_server("res_visual_ridge_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
+  
+  mod_res_visual_prev_map_server("res_visual_prev_map_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
+  mod_res_visual_multiple_maps_server("res_visual_multiple_maps_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
+
+  mod_res_visual_scatter_server("res_visual_scatter_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
+  mod_res_visual_ridge_server("res_visual_ridge_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
   
   mod_indicator_in_app_server("indicator_in_app_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
   mod_indicator_dictionary_server("indicator_dictionary_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)

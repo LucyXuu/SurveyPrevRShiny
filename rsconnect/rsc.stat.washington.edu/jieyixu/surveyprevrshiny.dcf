@@ -5,7 +5,7 @@ account: jieyixu
 server: rsc.stat.washington.edu
 hostUrl: https://rsc.stat.washington.edu/__api__
 appId: 59
-bundleId: 311
+bundleId: 315
 url: https://rsc.stat.washington.edu/content/3395d67a-7d69-4075-8809-f8a5366e4d74/
 version: 1
 asMultiple: FALSE

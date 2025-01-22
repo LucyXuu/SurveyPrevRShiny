@@ -179,6 +179,13 @@ get_country_GADM <- function(country,resolution=1) {
     }
   }
   
+  ##admin2 needs to be modified when using mics data
+  if(TRUE){
+    modify_this <- gadm_list[['Admin-2']]
+    modify_this <- modify_this[modify_this$ENGTYPE_2=="Local Authority",]
+    gadm_list[['Admin-2']] <- modify_this
+  }
+  
   
   return(gadm_list)
 }

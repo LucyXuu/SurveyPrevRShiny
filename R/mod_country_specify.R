@@ -448,26 +448,18 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
     })
     
-    #################################################################################
-    #################################################################################
-    # update indicator group for mics
-    #################################################################################
-    #################################################################################
     
-    if(TRUE){
-      surveyPrev_ind_list <- ref_tab_mics
-    }
+    surveyPrev_ind_list <- rv(list = NULL)
     
-    #################################################################################
-    #################################################################################
-    # update indicator group for normal non-mic
-    #################################################################################
-    #################################################################################
-    if(FALSE){
-      surveyPrev_ind_list <- ref_tab_all
-    }
-    
-    updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+    observeEvent(CountryInfo$MICS_version(), {
+      if(CountryInfo$MICS_version()) {
+        surveyPrev_ind_list <<- ref_tab_mics
+        updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+      } else {
+        surveyPrev_ind_list <<- ref_tab_all
+        updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+      }
+    })
     
     
     ### preload Zambia
@@ -763,7 +755,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
       if (input$Svy_ind_group == current_svy_ind_group_selection()) {return()}
       
-      if (!is.null(AnalysisInfo$model_screen_list())) {
+      if (!is.null(AnalysisInfo$model_screen_list()) | !is.null(CountryInfo$svy_analysis_dat())) {
         #if (input$Svy_ind_group != current_svy_ind_group_selection()) {
         
         shinyWidgets::confirmSweetAlert(

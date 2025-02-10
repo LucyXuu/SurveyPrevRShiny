@@ -82,9 +82,9 @@ app_ui <- function(request) {
                                       shinydashboard::menuItem("Result Tabulation", tabName = "res_tab", icon = icon("line-chart")),
                                       shinydashboard::menuItem(HTML("&nbsp Report Generation"), tabName = "report_tab", icon = icon("print")),
                                       shinydashboard::menuItem(HTML("&nbsp Tool Kit"), tabName = "tool_kit", icon = icon("screwdriver-wrench"),
-                                                               shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Indicators in the App"), tabName = "indicator_in_app",icon = NULL),
-                                                               shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp DHS Indicator Dictionary"), tabName = "indicator_dictionary",icon = NULL),
-                                                               shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp DHS Report Estimate"), tabName = "DHS_API_est",icon = NULL)) #,
+                                                               shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Indicators in the App"), tabName = "indicator_in_app",icon = NULL))#,
+                                                               # shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp DHS Indicator Dictionary"), tabName = "indicator_dictionary",icon = NULL),
+                                                               # shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp DHS Report Estimate"), tabName = "DHS_API_est",icon = NULL)) #,
                                       # div(style = "position: absolute; bottom: 50px; width: 100%; padding: 10px;",
                                       #     img(src = "www/WHO_logo.jpg",
                                       #           height = "200px", style = "display: block; margin: auto;")
@@ -133,11 +133,11 @@ app_ui <- function(request) {
                                       shinydashboard::tabItem(tabName = "report_tab",
                                                               mod_report_preparation_ui("report_preparation_1")), # Report generation
                                       shinydashboard::tabItem(tabName = "indicator_in_app",
-                                                              mod_indicator_in_app_ui("indicator_in_app_1")), # Indicator supported in the app
-                                      shinydashboard::tabItem(tabName = "indicator_dictionary",
-                                                              mod_indicator_dictionary_ui("indicator_dictionary_1")), # Indicator Dictionary
-                                      shinydashboard::tabItem(tabName = "DHS_API_est",
-                                                              mod_DHS_API_est_ui("DHS_API_est_1")) # Indicator Dictionary
+                                                              mod_indicator_in_app_ui("indicator_in_app_1"))#, # Indicator supported in the app
+                                      # shinydashboard::tabItem(tabName = "indicator_dictionary",
+                                      #                         mod_indicator_dictionary_ui("indicator_dictionary_1")), # Indicator Dictionary
+                                      # shinydashboard::tabItem(tabName = "DHS_API_est",
+                                      #                         mod_DHS_API_est_ui("DHS_API_est_1")) # Indicator Dictionary
                                     )
                                   ),
                                   tags$head(tags$style(HTML("

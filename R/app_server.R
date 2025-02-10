@@ -50,7 +50,7 @@ app_server <- function(input, output, session) {
   
   
   ### other parameters for this version of the app
-  CountryInfo$legend_color_reverse(F)
+  CountryInfo$legend_color_reverse(T)
   
   
   CountryInfo$use_preloaded_Zambia(F)
@@ -64,7 +64,7 @@ app_server <- function(input, output, session) {
   
   mod_survey_dat_input_server("survey_dat_input_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
   mod_model_selection_server("model_selection_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
-  mod_result_tabulate_server("result_tabulate1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
+  mod_result_tabulate_server("result_tabulate_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
   mod_report_preparation_server("report_preparation_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
   
   mod_res_visual_prev_map_server("res_visual_prev_map_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
@@ -74,7 +74,7 @@ app_server <- function(input, output, session) {
   mod_res_visual_ridge_server("res_visual_ridge_1",CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo)
   
   mod_indicator_in_app_server("indicator_in_app_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
-  mod_indicator_dictionary_server("indicator_dictionary_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
-  mod_DHS_API_est_server("DHS_API_est_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
+  # mod_indicator_dictionary_server("indicator_dictionary_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
+  # mod_DHS_API_est_server("DHS_API_est_1", CountryInfo = CountryInfo,AnalysisInfo=AnalysisInfo,parent_session=session)
   
 }

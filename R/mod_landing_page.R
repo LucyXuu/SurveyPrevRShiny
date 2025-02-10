@@ -23,9 +23,9 @@ mod_landing_page_ui <- function(id) {
           tags$a("official website", href = paste0(website_link),
                  target = "_blank", class = "official-link"),
           " for detailed ",
-          tags$a("instruction videos", href = paste0(website_link,"/overview/youtube_app_demo/"),
-                 target = "_blank", class = "instruction-link"),
-          ", ",
+          # tags$a("instruction videos", href = paste0(website_link,"/overview/youtube_app_demo/"),
+          #        target = "_blank", class = "instruction-link"),
+          # ", ",
           tags$a("methodology descriptions", href = paste0(website_link,"/method/approach_overview/"),
                  target = "_blank", class = "instruction-link"),
           " and guidance on ",
@@ -49,36 +49,36 @@ mod_landing_page_ui <- function(id) {
     # print((color_codes)[2:5])
     
     ### Step 0 prepare data
-    div(
-      class = "box0",
-      shinydashboard::box(title = "Step 0 - Request Data",
-                          status = "primary", solidHeader = TRUE, collapsible = TRUE,
-                          width = NULL,
-                          tags$div(class="instructions",
-                                   HTML(paste0(
-                                     "<p style=' margin-bottom:10px;'>",
-                                     "Before using the App, the user needs access to the required DHS survey data. ",
-                                     "DHS maintains strict data access rules, particularly for sensitive GPS-tagged data needed for SAE analysis.</p> ",
-                                     "<p style=''>",
-                                     "Follow these steps to <strong>obtain access to DHS datasets</strong> (instruction videos also available ",
-                                     tags$a("here", href = paste0(website_link,"/overview/youtube_data_request/"),
-                                            target = "_blank", class = "official-link"), "):</p>",
-                                     tags$ol(type="a",
-                                             tags$li(tags$b("Register an account"),": Start by creating an account on the ",
-                                                     tags$a("DHS website", href = "https://dhsprogram.com/Data/",
-                                                            target = "_blank", class = "official-link"),
-                                                     '.'
-                                             ),
-                                             tags$li(tags$b("Provide project information"),": Complete the forms with specific details about the project."),
-                                             tags$li(tags$b("Request survey access"), ": Post-registration, formally request access to the country/year specific survey datasets. Be sure to request ",
-                                                     tags$b("GPS data"), "; approval typically occurs within 48 hours.")
-                                     ) #,
-                                     #"<p>",
-                                     #"Additionally, download <strong>WHO shapefiles</strong> from the WHO GIS Hub. Please reference the <strong>implementation guide</strong> for detailed instructions.</p>"
-                                   ))
-                          )
-      )
-    ),
+    # div(
+    #   class = "box0",
+    #   shinydashboard::box(title = "Step 0 - Request Data",
+    #                       status = "primary", solidHeader = TRUE, collapsible = TRUE,
+    #                       width = NULL,
+    #                       tags$div(class="instructions",
+    #                                HTML(paste0(
+    #                                  "<p style=' margin-bottom:10px;'>",
+    #                                  "Before using the App, the user needs access to the required DHS survey data. ",
+    #                                  "DHS maintains strict data access rules, particularly for sensitive GPS-tagged data needed for SAE analysis.</p> ",
+    #                                  "<p style=''>",
+    #                                  "Follow these steps to <strong>obtain access to DHS datasets</strong> (instruction videos also available ",
+    #                                  tags$a("here", href = paste0(website_link,"/overview/youtube_data_request/"),
+    #                                         target = "_blank", class = "official-link"), "):</p>",
+    #                                  tags$ol(type="a",
+    #                                          tags$li(tags$b("Register an account"),": Start by creating an account on the ",
+    #                                                  tags$a("DHS website", href = "https://dhsprogram.com/Data/",
+    #                                                         target = "_blank", class = "official-link"),
+    #                                                  '.'
+    #                                          ),
+    #                                          tags$li(tags$b("Provide project information"),": Complete the forms with specific details about the project."),
+    #                                          tags$li(tags$b("Request survey access"), ": Post-registration, formally request access to the country/year specific survey datasets. Be sure to request ",
+    #                                                  tags$b("GPS data"), "; approval typically occurs within 48 hours.")
+    #                                  ) #,
+    #                                  #"<p>",
+    #                                  #"Additionally, download <strong>WHO shapefiles</strong> from the WHO GIS Hub. Please reference the <strong>implementation guide</strong> for detailed instructions.</p>"
+    #                                ))
+    #                       )
+    #   )
+    # ),
     
     
     ### Step 1 specifying survey meta data
@@ -91,7 +91,8 @@ mod_landing_page_ui <- function(id) {
                           tags$div(class="instructions",
                                    HTML(paste0(
                                      "<p style=' margin-bottom:10px;'>",
-                                     "After obtaining access to the DHS data, the user may proceed to  ",
+                                     #"After obtaining access to the DHS data, the user may proceed to  ",
+                                     "Please first proceed to ",
                                      actionButton(
                                        ns("switch_country_tab"),  # Button ID to trigger the modal
                                        "country specification panel ",
@@ -135,24 +136,28 @@ mod_landing_page_ui <- function(id) {
                                        "Data Upload Panel",
                                        style = "border: none; background: none; color: blue; padding: 0; margin-bottom: 3px; font-size: 16px;"
                                      ),
-                                     " after obtaining your DHS data (see instructional videos ",
-                                     tags$a("here", href = paste0(website_link,"/overview/youtube_data_request/"),
-                                            target = "_blank", class = "official-link"),
-                                     ").</p>",
+                                     " after specifying the meta data for analysis",
+                                     # " after obtaining your DHS data (see instructional videos ",
+                                     # tags$a("here", href = paste0(website_link,"/overview/youtube_data_request/"),
+                                     #        target = "_blank", class = "official-link"),
+                                     #").</p>",
+                                     ".</p>",
                                      tags$ul(
-                                       tags$li(tags$b("Data Download"),': ',
-                                               tags$ol(type="a",
-                                                       tags$li("Log in at the",
-                                                               tags$a("DHS website", href = "https://dhsprogram.com/Data/",
-                                                                      target = "_blank", class = "official-link"),
-                                                               "navigate to your pre-approved project, and select the country."),
-                                                       tags$li("Follow the instructions on the data upload page to select the required Stata format recode data. Be sure to include ", tags$b("Geographic Data"), "."),
-                                                       tags$li("Download all datasets in a zip file.")
-                                               )
-                                       ),
+                                       # tags$li(tags$b("Data Download"),': ',
+                                       #         tags$ol(type="a",
+                                       #                 tags$li("Log in at the",
+                                       #                         tags$a("DHS website", href = "https://dhsprogram.com/Data/",
+                                       #                                target = "_blank", class = "official-link"),
+                                       #                         "navigate to your pre-approved project, and select the country."),
+                                       #                 tags$li("Follow the instructions on the data upload page to select the required Stata format recode data. Be sure to include ", tags$b("Geographic Data"), "."),
+                                       #                 tags$li("Download all datasets in a zip file.")
+                                       #         )
+                                       # ),
                                        tags$li(tags$b("Data Upload"),':',
-                                               " Click ", tags$b("Data Upload"), ", select the downloaded .zip file, and submit.",
-                                               "Once the data upload is complete (indicated by the green check marks on the upper right of the tab),",
+                                               # " Click ", tags$b("Data Upload"), ", select the downloaded .zip file, and submit.",
+                                               # "Once the data upload is complete (indicated by the green check marks on the upper right of the tab),",
+                                               " Click ", tags$b("Load Data"), ", the app will automatically load the analysis data of selected indicator.",
+                                               "Once the data loading is complete (indicated by the green check marks on the upper right of the tab),",
                                                "the app will automatically prepare the dataset for analysis."
                                        ),
                                        tags$li(tags$b("Cluster Map"),

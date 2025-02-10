@@ -5,9 +5,9 @@
 ref_tab_mics <- data.frame(matrix(nrow = 3))
 ref_tab_mics$Chap_abbrev <- c("CH", "CH", "CM")
 ref_tab_mics$ID <- c("DTP3", "BCG", "NMR")
-ref_tab_mics$Description <- c("Percentage of children age 12-23 months who had received DPT3 vaccination",
-                              "Percentage of children age 12-23 months who had recieved BCG vaccination, Bacillus Calmette-Guérin (Tuberculosis) ",
-                              "Probability of dying in the first month of life in the five (or ten) years preceding the survey")
+ref_tab_mics$Description <- c("Percentage of children age 12-23 months who had received third does of DPT3 vaccine",
+                              "Percentage of children age 12-23 months who had recieved BCG containing vaccine",
+                              "Probability of dying within the first month of life")
 ref_tab_mics$Topic <- c("Chapter 10 - Child Health",
                         "Chapter 10 - Child Health",
                         "Chapter 08 - Infant And Child Mortality")

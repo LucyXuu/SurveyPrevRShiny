@@ -97,6 +97,7 @@ mod_result_tabulate_server <- function(id,CountryInfo,AnalysisInfo){
     ncols <- reactive({ length(col_names()) })
     
     observeEvent(col_names(), {
+      print(col_names())
       updateSelectInput(inputId = "selected_adm",
                         choices = col_names())
     })

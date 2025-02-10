@@ -303,14 +303,19 @@ mod_model_selection_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         "<br>",
         "Indicator: <span style='font-weight:bold;'>", CountryInfo$svy_indicator_des(),"</span>.",
         #" at <span style='font-weight:bold;'>", concatenate_vector_with_and(CountryInfo$GADM_analysis_levels()), "</span> level(s).",
-        "<br><span style='font-weight:bold;background-color:#F2DF8D'>",
-        "Before starting the analysis, please check the app's national estimates for consistency with the DHS final report in the ",
-        actionButton(
-          ns("switch_verification"),
-          "verification panel",
-          style = "border: none; background: none; color: blue; padding: 0; margin-bottom: 3px; font-weight:bold;font-size: large;"
-        ),
-        ".</span><br>",
+        
+        
+        ############################################################################################
+        ### compare to DHS estimate if using DHS version
+        ############################################################################################
+        # "<br><span style='font-weight:bold;background-color:#F2DF8D'>",
+        # "Before starting the analysis, please check the app's national estimates for consistency with the DHS final report in the ",
+        # actionButton(
+        #   ns("switch_verification"),
+        #   "verification panel",
+        #   style = "border: none; background: none; color: blue; padding: 0; margin-bottom: 3px; font-weight:bold;font-size: large;"
+        # ),
+        # ".</span><br>",
         "</p>",
         "<div style='background-color: #D0E4F7; padding: 10px; font-size: large;'>",
         "Recommended Modelling Approaches: (Methodology under 'Model Details')",

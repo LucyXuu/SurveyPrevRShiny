@@ -42,7 +42,7 @@ mod_survey_dat_input_ui <- function(id) {
       # Main panel on the left
       column(4,
              tabsetPanel(id = ns("data_provision_method"),
-                         #switch to Manual Upload in non-mics version
+                         #switch text to Manual Upload in non-mics version
                          tabPanel("Load Data",
                                   div(style = "margin: auto;float: left;margin-top:10px;",
                                       uiOutput(ns("manual_upload_text"))
@@ -582,6 +582,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       # # Check if a file has been uploaded
       if (CountryInfo$MICS_version()) {
         data(NGcluster)
+        CountryInfo$svy_analysis_dat(get(paste0("NG_", CountryInfo$svy_indicator_var())))
       } else if (is.null(input$Svy_dataFile)) {
         showNoFileSelectedModal()
         return()
@@ -611,12 +612,13 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       
       ### show no need to reupload if user upload dataset again
 ################################################################################################
-      ##modify here to make sure when reselecting indicators in MICS, the modal does not appear
+      ##modify here to make sure when reselecting indicators in MICS, 
       data.upload.complete <- (all(c(!recode_status_check,!GPS_status_check)))
-      if(data.upload.complete && CountryInfo$svy_indicator_var()){
-        showDataCompleteModal()
-        return()
-      }
+      
+      # if(data.upload.complete | (CountryInfo$MICS_version() & CountryInfo$suv_analysis_dat() ==  get(paste0("NG_", CountryInfo$svy_indicator_var())))){
+      #   showDataCompleteModal()
+      #   return()
+      # }
       
       
       
@@ -632,6 +634,14 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       ## set survey recode data
       
       for (i in 1:length(recode_names_list)){
+        #end for loop if MICS version, and show the spinner so the load process follows intuition
+        if(CountryInfo$MICS_version()){
+          session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                           message = paste0("Loading data, please wait ...")))
+          Sys.sleep(1)
+          session$sendCustomMessage('controlSpinner', list(action = "hide"))
+          next
+        }
         
         session$sendCustomMessage('controlSpinner', list(action = "show",
                                                          message = paste0("Parsing .zip files. Please wait...")))
@@ -872,11 +882,6 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     
     ### when survey uploaded or new indicator specified, update analysis data set
     
-    if(!is.null(CountryInfo$svy_analysis_dat())){
-      showDataCompleteModal()
-      return()
-    }
-    
     data_pre_snapshot <- reactive({
       list(
         indicator_selected = CountryInfo$svy_indicator_var(),
@@ -1067,13 +1072,14 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
           return()
         }
       }
-      analysis_dat <-get(paste0("NG_", CountryInfo$svy_indicator_var()))
+      #analysis_dat <-get(paste0("NG_", CountryInfo$svy_indicator_var()))
+      analysis_dat <-CountryInfo$svy_analysis_dat()
       
       
       
       if(is.null(analysis_dat)){return()
       }else{
-        CountryInfo$svy_analysis_dat(analysis_dat)
+        #CountryInfo$svy_analysis_dat(analysis_dat)
         analysis_dat <- haven::as_factor(analysis_dat)
         
         ### do not display strata info for WHO version of the app

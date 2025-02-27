@@ -177,6 +177,10 @@ screen_svy_model <- function(cluster.admin.info,
     N.region.no.data <- N.region-length(unique(cluster.info$data$admin2.name.full))
     
     
+    
+    ### to aviod on PSU issue?
+    options(survey.adjust.domain.lonely=TRUE)
+    options(survey.lonely.psu="adjust")
     ### calculate direct estimate
     res.direct <- surveyPrev::directEST(data = analysis.dat,
                                         cluster.info = cluster.info,

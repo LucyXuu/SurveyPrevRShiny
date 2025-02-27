@@ -47,6 +47,9 @@ mod_country_specify_ui <- function(id) {
              #h4("Data Input"),              #div(style = "margin-top: 10px;",
              #tags$hr(style="border-top-color: #E0E0E0;"), # (style="border-top: 2px solid #707070;")
              
+             # ### survey type
+             # selectInput(ns("Svy_type"), with_red_star("Choose a survey "),
+             #             character(0)),
              ### country name
              selectInput(ns("country"), with_red_star("Choose a country "),
                          character(0)),

@@ -2,16 +2,19 @@
 ### setup mics metadata
 ###############################################################
 
-ref_tab_mics <- data.frame(matrix(nrow = 3))
-ref_tab_mics$Chap_abbrev <- c("CH", "CH", "CM")
-ref_tab_mics$ID <- c("DTP3", "BCG", "NMR")
-ref_tab_mics$Description <- c("Percentage of children age 12-23 months who had received third does of DPT3 vaccine",
+ref_tab_mics <- data.frame(matrix(nrow = 4))
+ref_tab_mics$Chap_abbrev <- c("CH", "CH", "CH", "CM")
+ref_tab_mics$ID <- c("DTP1", "DTP3", "BCG", "NMR")
+ref_tab_mics$Description <- c("Percentage of children age 12-23 months who had received third does of DTP1 vaccine",
+                              "Percentage of children age 12-23 months who had received third does of DTP3 vaccine",
                               "Percentage of children age 12-23 months who had recieved BCG containing vaccine",
                               "Probability of dying within the first month of life")
 ref_tab_mics$Topic <- c("Chapter 10 - Child Health",
                         "Chapter 10 - Child Health",
+                        "Chapter 10 - Child Health",
                         "Chapter 08 - Infant And Child Mortality")
 ref_tab_mics$Title <- c("Child Health",
+                        "Child Health",
                         "Child Health",
                         "Infant And Child Mortality")
 ref_tab_mics <- ref_tab_mics[, c(-1)]

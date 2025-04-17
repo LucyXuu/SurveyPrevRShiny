@@ -592,7 +592,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
         } else {
           showModal(modalDialog(
             title = "Data for indicator does not exist currently",
-            paste0("Data for the selected indicator at year ", year, " is currently unavailable"),
+            paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
             easyClose = TRUE,
             footer = modalButton("OK")
           ))

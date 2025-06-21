@@ -603,16 +603,6 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
         return()
       }
       
-      
-      
-      #####################
-      ##does not work, come back later
-      if (CountryInfo$svy_indicator_des() == "") {
-        showNoFileSelectedModal()
-        return()
-      }
-      #####################
-      
       if(CountryInfo$use_preloaded_Zambia()){
         return()
       }

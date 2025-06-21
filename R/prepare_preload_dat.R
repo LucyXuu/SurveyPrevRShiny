@@ -2,35 +2,59 @@
 ### setup mics metadata
 ###############################################################
 
-ref_tab_mics <- data.frame(matrix(nrow = 8))
-ref_tab_mics$Chap_abbrev <- c("CH", "CH", "CH", "CM", "MH", "MH", "MH", "CH")# "VE", "VE", "CH")
+ref_tab_mics <- data.frame(matrix(nrow = 18))
+
+ref_tab_mics$Chap_abbrev <- c("CH", "CH", "CH", "CM", "MH", "MH", "MH", "CH", "MH", "MH", "CH", "CH", "CH", "CH", "CH", "CH", "CH", "MH")
+
 ref_tab_mics$ID <- c("CH_VACC_C_DP1", "CH_VACC_C_DP3", "CH_VACC_C_BCG", "CM_ECMR_C_NNF",
                      "RH_ANCN_W_N4P",
                      "RH_DELP_C_DHF",
                      "RH_PCCT_C_DY2",
-                     # "FG_KFCC_W_HFC",
-                     # "FG_PFCC_W_WCC",
-                     "CH_DIAT_C_TRT")
-ref_tab_mics$Description <- c("Percentage of children age 12-23 months who had received third dose of DTP1 vaccine",
-                              "Percentage of children age 12-23 months who had received third dose of DTP3 vaccine",
-                              "Percentage of children age 12-23 months who had recieved BCG containing vaccine",
+                     "CH_DIAT_C_TRT",
+                     "RH_ANCN_W_N01",
+                     "RH_DELA_C_SKP",
+                     "CH_VACC_C_BAS", "CH_VACC_C_PCV", "CH_VACC_C_OP3",
+                     "CH_VACC_C_OP0", "CH_VACC_C_IPV", "CH_VACC_C_MSL", "CH_VACC_C_YFI", "RH_PCCT_C_DY2"
+                     )
+
+ref_tab_mics$Description <- c("Children age 12-23 months who had received third dose of DTP1 vaccine",
+                              "Children age 12-23 months who had received third dose of DTP3 vaccine",
+                              "Children age 12-23 months who had recieved BCG containing vaccine",
                               "Probability of dying within the first month of life",
                               "Antenatal visits for pregnancy: 4+ visits",
                               "Place of delivery: Health facility",
                               "Newborn's first postnatal checkup in the first two days after birth",
-                              # "Percentage of women who have ever heard of female circumcision",
-                              # "Percentage of women circumcised",
-                              "Children under 5 who sought treatment for diarrhea")
-ref_tab_mics$Full_definition <- c("Percentage of children age 12-23 months who had received third dose of DTP1 vaccine",
-                                  "Percentage of children age 12-23 months who had received third dose of DTP3 vaccine",
+                              "Children under 5 who sought treatment for diarrhea",
+                              "Antenatal visits for pregnancy: 1",
+                              "Assistance during delivery from a skilled provider",
+                              "Children age 12-23 months who is fully immunized with basic antigens",
+                              "Children age 12-23 months who had recieved third dose of Pneumococcal (Conjugate) vaccine",
+                              "Children age 12-23 months who had recieved third dose of Oral Polio vaccine",
+                              "Children age 12-23 months who had recieved Oral Polio vaccine",
+                              "Children age 12-23 months who had recieved Interactive Polio vaccine",
+                              "Children age 12-23 months who had recieved measles vaccine",
+                              "Children age 12-23 months who had recieved yellow fever vaccine",
+                              "Women whose most recent live-born child received a health check within 2 days of delivery")
+
+ref_tab_mics$Full_definition <- c("Percentage of children age 12-23 months who had received DTP1 vaccine",
+                                  "Percentage of children age 12-23 months who had received third dose of DTP vaccine",
                                   "Percentage of children 12-23 months who had received BCG vaccination",
                                   "Probability of dying in the first month of life in the five or ten years preceding the survey, per 1,000 live births. Estimates are given for ten year periods for all characteristics, but for five year periods only for the national total, by residence, and by sex.",
                                   "Percentage of women by number of antenatal care visits, 4 or more visits to any provider column",
                                   "Place of delivery: Health facility",
-                                  "Post-natal health checks for newborns",
-                                  # "Percentage of women who have ever heard of female circumcision",
-                                  # "Percentage of women circumcised (women who experienced female genital cutting (FGM))",
-                                  "Children under 5 who sought treatment for diarrhea")
+                                  "Percentage of last births in the two years preceding the survey who had their first postnatal checkup within the first two days after birth",
+                                  "Children under 5 who sought treatment for diarrhea",
+                                  "Percentage of women who had a live birth (or stillbirth) in the two (or three/five) years preceding the survey who had 1 antenatal care visit",
+                                  "Percentage of live births (or stillbirths) in the two (or three/five) years preceding the survey assisted by a skilled provider. Skilled provider includes doctor, nurse, midwife and auxiliary nurse or midwife.",
+                                  "Percentage of children age 12-23 months who had received vaccines of BCG, third does of Polio and DTP, and Measles",
+                                  "Percentage of children age 12-23 months who had received third dose of Pneumococcal (Conjugate) vaccine",
+                                  "Percentage of children age 12-23 months who had received third dose of Oral Polio vaccine",
+                                  "Percentage of children age 12-23 months who had received Oral Polio vaccine",
+                                  "Percentage of children age 12-23 months who had received Interactive Polio vaccine",
+                                  "Percentage of children age 12-23 months who had measles vaccine",
+                                  "Percentage of children age 12-23 months who had yellow fever vaccine",
+                                  "Percentage of women age 15--49 years whose most recent live-born child received a health check within 2 days of delivery (at home or facility)")
+
 ref_tab_mics$Topic <- c("Chapter 07 - Thrive: Child health, nutrition and development",
                         "Chapter 07 - Thrive: Child health, nutrition and development",
                         "Chapter 07 - Thrive: Child health, nutrition and development",
@@ -38,9 +62,18 @@ ref_tab_mics$Topic <- c("Chapter 07 - Thrive: Child health, nutrition and develo
                         "Chapter 06 - Thrive - Reproductive and maternal health",
                         "Chapter 06 - Thrive - Reproductive and maternal health",
                         "Chapter 06 - Thrive - Reproductive and maternal health",
-                        # "Chapter 09: Protected from violence and exploitation",
-                        # "Chapter 09: Protected from violence and exploitation",
-                        "Chapter 07 - Thrive: Child health, nutrition and development")
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 06 - Thrive - Reproductive and maternal health",
+                        "Chapter 06 - Thrive - Reproductive and maternal health",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 07 - Thrive: Child health, nutrition and development",
+                        "Chapter 06 - Thrive - Reproductive and maternal health")
+
 ref_tab_mics$Title <- c("Child Health",
                         "Child Health",
                         "Child Health",
@@ -48,16 +81,24 @@ ref_tab_mics$Title <- c("Child Health",
                         "Maternal Health",
                         "Maternal Health",
                         "Maternal Health",
-                        # "Violence and Exploitation",
-                        # "Violence and Exploitation",
-                        "Child Health")
+                        "Child Health",
+                        "Maternal Health",
+                        "Maternal Health",
+                        "Child Health",
+                        "Child Health",
+                        "Child Health",
+                        "Child Health",
+                        "Child Health",
+                        "Child Health",
+                        "Child Health",
+                        "Maternal Health")
 
 ref_tab_mics <- ref_tab_mics[, c(-1)]
 
 
 
 ref_tab_mics_2016 <- data.frame(matrix(nrow = 4))
-ref_tab_mics_2016$Chap_abbrev <- c("CH", "CH", "CH", "CM")#, "MH", "MH", "MH", "CH")# "VE", "VE", "CH")
+ref_tab_mics_2016$Chap_abbrev <- c("CH", "CH", "CH", "CM")
 ref_tab_mics_2016$ID <- c("CH_VACC_C_DP1", "CH_VACC_C_DP3", "CH_VACC_C_BCG", "CM_ECMR_C_NNF")
 ref_tab_mics_2016$Description <- c("Percentage of children age 12-23 months who had received third dose of DTP1 vaccine",
                               "Percentage of children age 12-23 months who had received third dose of DTP3 vaccine",

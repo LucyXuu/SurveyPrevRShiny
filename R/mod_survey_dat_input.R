@@ -581,22 +581,28 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     observeEvent(input$upload_Svy_Data, {
       # # Check if a file has been uploaded
       if (CountryInfo$MICS_version()) {
-        data(NGcluster)
-        CountryInfo$svy_analysis_dat(get(paste0("NG_", CountryInfo$svy_indicator_var())))
+        indicator <- CountryInfo$svy_indicator_var()
+        year <- CountryInfo$svyYear_selected()
+        file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
+        if(file.exists(file_path)){
+          load(file_path)
+          CountryInfo$svy_analysis_dat(data)
+          
+          load(paste0("data/MICS/NGcluster_", year, ".RData"))
+        } else {
+          showModal(modalDialog(
+            title = "Data for indicator does not exist currently",
+            paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
+            easyClose = TRUE,
+            footer = modalButton("OK")
+          ))
+          geo <- NULL
+        }
       } else if (is.null(input$Svy_dataFile)) {
         showNoFileSelectedModal()
         return()
       }
       
-      
-      
-      #####################
-      ##does not work, come back later
-      if (CountryInfo$svy_indicator_des() == "") {
-        showNoFileSelectedModal()
-        return()
-      }
-      #####################
       
       if(CountryInfo$use_preloaded_Zambia()){
         return()

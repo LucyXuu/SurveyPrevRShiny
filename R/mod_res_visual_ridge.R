@@ -307,6 +307,8 @@ mod_res_visual_ridge_server <- function(id,CountryInfo,AnalysisInfo){
       model_res_all <- AnalysisInfo$model_res_list()
       model_res_selected <- model_res_all[[selected_method]][[selected_adm]]
       
+      print(model_res_selected)
+      
       
       
       ### plot

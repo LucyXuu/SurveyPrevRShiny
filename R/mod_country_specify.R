@@ -4,9 +4,9 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList
 mod_country_specify_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
@@ -124,7 +124,7 @@ mod_country_specify_ui <- function(id) {
 
 #' country_specify Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_session){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
@@ -418,25 +418,6 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
     })
     
-    
-    
-    # if (!is.null(CountryInfo$WHO_version()) && CountryInfo$WHO_version()) {
-    #   country_name_list <- WHO.app.countries
-    #   updateSelectInput(inputId = "country", choices = c('', country_name_list))
-    #   return()
-    # }
-    # 
-    # # MICS version
-    # if (!is.null(CountryInfo$MICS_version()) && CountryInfo$MICS_version()) {
-    #   country_name_list <- MICS.app.countries
-    #   updateSelectInput(inputId = "country", choices = c('', country_name_list), selected = "Nigeria")
-    #   return()
-    # }
-    # 
-    # #normal version is not specified
-    # country_name_list <- sort(DHS.country.meta[['CountryName']])
-    # updateSelectInput(inputId = "country", choices = c('', country_name_list))
-    
     observe({
       
       if(CountryInfo$shapefile_source()!='WHO-download'){
@@ -483,6 +464,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
     })
     
+    ### preload Madagascar
     observeEvent(CountryInfo$use_preloaded_Madagascar(),{
       
       #message('loading MDG')
@@ -537,7 +519,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
           text = HTML(paste0("<p> Are you sure you want to switch to another country/survey? <br><br>",
                              "Uploaded data, fitted models and results for <br>",
                              "<div style='background-color: #D0E4F7; padding: 10px; font-size: large;margin-top:15px;margin-bottom:15px;'>",
-                             "<strong> DHS ",CountryInfo$svyYear_selected(),' survey in ',CountryInfo$country(),"</strong> <br>",
+                             "<strong> MICS ",CountryInfo$svyYear_selected(),' survey in ',CountryInfo$country(),"</strong> <br>",
                              "</div>",
                              "will all be ",
                              "<strong> <font color='red'> deleted</strong> </font>.</p>")),
@@ -549,8 +531,10 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       }else{
         
         ### Update country info
+        mics <- CountryInfo$MICS_version()
         CountryInfo$reset_val()
         AnalysisInfo$reset_results()
+        CountryInfo$MICS_version(mics)
         
         freezeReactiveValue(input, "Svy_year")
         
@@ -558,7 +542,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         CountryInfo$svyYear_selected('')
         
         if(CountryInfo$MICS_version()){
-          CountryInfo$svyYear_list(c("2021"))
+          CountryInfo$svyYear_list(c("2021", "2016"))
           updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
         } else {
           CountryInfo$svyYear_list(get_survey_year(input$country))
@@ -578,7 +562,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       if(CountryInfo$WHO_version()){
         country_name_list <- WHO.app.countries
       }else if (CountryInfo$MICS_version()){
-        country_name_list <- c("Nigeria")
+        country_name_list <- MICS.app.countries
       }else {
         country_name_list <- sort(DHS.country.meta[['CountryName']])
       }
@@ -586,11 +570,11 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
       if ((input$change_country_confirm)) {
         # User confirmed the change
-        
+        mics <- CountryInfo$MICS_version()
         ### Clear all existing data
         CountryInfo$reset_val()
         AnalysisInfo$reset_results()
-        
+        CountryInfo$MICS_version(mics)
         
         ### Update country info
         CountryInfo$country(input$country)
@@ -604,9 +588,9 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         
         ### Update country info
         if(CountryInfo$MICS_version()){
-          CountryInfo$svyYear_list(c("2021"))
+          CountryInfo$svyYear_list(c("2021", "2016"))
           CountryInfo$svyYear_selected('')
-          updateSelectInput(inputId = "Svy_year", 
+          updateSelectInput(inputId = "Svy_year",
                             choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
         } else {
           CountryInfo$svyYear_list(get_survey_year(input$country))
@@ -644,7 +628,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
           text = HTML(paste0("<p> Are you sure you want to switch to another country/survey? <br><br>",
                              "Uploaded data, fitted models and results for <br>",
                              "<div style='background-color: #D0E4F7; padding: 10px; font-size: large;margin-top:15px;margin-bottom:15px;'>",
-                             "<strong> DHS ",CountryInfo$svyYear_selected(),' survey in ',CountryInfo$country(),"</strong> <br>",
+                             "<strong> MICS ",CountryInfo$svyYear_selected(),' survey in ',CountryInfo$country(),"</strong> <br>",
                              "</div>",
                              "will all be ",
                              "<strong> <font color='red'> deleted</strong> </font>.</p>")),
@@ -693,20 +677,31 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
       if ((input$change_svy_yr_confirm)) {
         # User confirmed the change
-        
+        mics <- CountryInfo$MICS_version()
         ### Clear all existing data
         CountryInfo$reset_val()
         AnalysisInfo$reset_results()
         
+        
         ### Update country info
+        CountryInfo$MICS_version(mics)
         CountryInfo$country(input$country)
         CountryInfo$svyYear_selected(input$Svy_year)
-        CountryInfo$svyYear_list(get_survey_year(input$country))
+        
+        ### Update country info
+        if(CountryInfo$MICS_version()){
+          CountryInfo$svyYear_list(c("2021", "2016"))
+          updateSelectInput(inputId = "Svy_year",
+                            choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)),
+                            selected=CountryInfo$svyYear_selected())
+        } else {
+          CountryInfo$svyYear_list(get_survey_year(input$country))
+          CountryInfo$svyYear_selected('')
+          updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)),
+                            selected=CountryInfo$svyYear_selected())
+        }
         
         message(paste0('changed to survey ',CountryInfo$svyYear_selected()))
-        
-        updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)),
-                          selected=CountryInfo$svyYear_selected())
         
         ### get shapefiles
         ### show a spinner for waiting
@@ -913,7 +908,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       
       recode.avail <- check_dat_avail(country = input$country , svy_year = input$Svy_year , indicator =input$Svy_indicator)
       
-      if(length(recode.avail$missing_recode)>0){
+      if(length(recode.avail$missing_recode)>0&&!CountryInfo$MICS_version()){
         showNoRecodeModal(recode=recode.avail$missing_recode,
                           Svy_indicator=CountryInfo$svy_indicator_des())
       }

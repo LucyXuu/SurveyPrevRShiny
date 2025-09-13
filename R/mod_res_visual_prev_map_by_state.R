@@ -1,16 +1,15 @@
-
-
-#' res_visual_prev_map_by_state UI Function
+#' result_visual UI Function
 #'
 #' @description A shiny Module.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
-mod_res_visual_prev_map_ui <- function(id) {
+#' @importFrom shiny NS tagList
+mod_res_visual_prev_map_by_state_ui <- function(id) {
   ns <- NS(id)
+  
   fluidPage(
     shinyWidgets::chooseSliderSkin("Flat", color = "#b0c4de"),
     tags$head(
@@ -47,7 +46,7 @@ mod_res_visual_prev_map_ui <- function(id) {
                                      "Area-level Model"= "FH", "Unit-level Model"="Unit"))
       ),
       column(4,
-             selectInput(ns("selected_adm"), "Select Admin Level", choices = character(0))
+             selectInput(ns("selected_state"), "Select a State", choices = character(0))
       )
     ),
     
@@ -96,13 +95,15 @@ mod_res_visual_prev_map_ui <- function(id) {
     
     
   )
+  
 }
 
-#' res_visual_prev_map_by_state Server Functions
+
+#' result_visual Server Functions
 #'
-#' @noRd 
-mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
-  moduleServer(id, function(input, output, session){
+#' @noRd
+mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo){
+  moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     ###############################################################
@@ -114,16 +115,14 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
       req(CountryInfo$country())
       req(CountryInfo$svy_indicator_var())
       req(CountryInfo$svy_analysis_dat())
+      req(AnalysisInfo$model_res_list())
       
       country <- CountryInfo$country()
       svy_year <- CountryInfo$svyYear_selected()
       
       HTML(paste0(
         "<p style='font-size: large;'>",
-        "Selected Country: <span style='font-weight:bold;background-color: #D0E4F7;'>", country, "</span>.",
-        " Survey Year: <span style='font-weight:bold;background-color: #D0E4F7;'>", svy_year, "</span>.",
-        "<br>",
-        "Indicator: <span style='font-weight:bold;background-color: #D0E4F7;'>", CountryInfo$svy_indicator_des(),
+        "Selected Indicator: <span style='font-weight:bold;background-color: #D0E4F7;'>", CountryInfo$svy_indicator_des(),
         "</span>.</p>",
         "<hr style='border-top-color: #E0E0E0;'>"
       ))
@@ -132,6 +131,7 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
     
     ###############################################################
     ### initialize parameters
+    ### need to add: require admin2 selected
     ###############################################################
     
     
@@ -146,6 +146,21 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
       adm.choice <- adm.choice[adm.choice!='National']
       updateSelectInput(inputId = "selected_adm",
                         choices = adm.choice)
+    })
+    
+    observeEvent(col_names(), {
+      state.choice <- c("Abia", "Adamawa", "Akwa Ibom", "Anambra", 
+                        "Bauchi", "Bayelsa", "Benue", "Borno", 
+                        "Cross River", "Delta", "Ebonyi", "Edo", 
+                        "Ekiti", "Enugu", "Federal Capital Territory", "Gombe", 
+                        "Imo", "Jigawa", "Kaduna", "Kano", 
+                        "Katsina", "Kebbi", "Kogi", "Kwara", 
+                        "Lagos", "Nasarawa", "Niger", "Ogun", 
+                        "Ondo", "Osun", "Oyo", "Plateau", 
+                        "Rivers", "Sokoto", "Taraba", "Yobe", 
+                        "Zamfara")
+      updateSelectInput(inputId = "selected_state",
+                        choices = state.choice)
     })
     
     
@@ -236,12 +251,13 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
     output$text_display <- renderUI({
       
       ### return empty map if no subnational level selected
-      if (length(input$selected_adm) == 0 || input$selected_adm == "") {
-        return(NULL)
-      }
+      # if (length(input$selected_adm) == 0 || input$selected_adm == "") {
+      #   return(NULL)
+      # }
       
       ### extract selections
-      selected_adm <- input$selected_adm
+      selected_adm <- "Admin-2"
+      selected_state <- input$selected_state
       selected_method <- input$selected_method
       selected_measure <- input$selected_measure
       
@@ -266,6 +282,7 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
       model_res_selected <- model_res_all[[selected_method]][[selected_adm]]
       
       
+      
       method_match <- c(
         "Direct" = "Direct estimates",
         "Unit" = "Unit-level",
@@ -281,7 +298,7 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
           "Results for ",
           "<span style='background-color: #D0E4F7;'><b>", method_des, "</b></span> ",
           "model at ",
-          "<span style='background-color: #D0E4F7;'><b>", selected_adm, "</b></span>",
+          "<span style='background-color: #D0E4F7;'><b>", selected_state, "</b></span>",
           " level are ",
           "<strong style='color: red;'>NOT</strong>",
           " available. Please make sure the model has been successfully fitted.",
@@ -294,8 +311,8 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
           "<p style='font-size: large;'>",
           "Presenting map for ",
           "<span style='background-color: #D0E4F7;'><b>", method_des, "</b></span> ",
-          "model at ",
-          "<span style='background-color: #D0E4F7;'><b>", selected_adm, "</b></span> level.",
+          "model in ",
+          "<span style='background-color: #D0E4F7;'><b>", selected_state, "</b></span>.",
           "</p>"
         ))
         
@@ -322,12 +339,13 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
       }
       
       ### return empty map if no subnational level selected
-      if (length(input$selected_adm) == 0 || input$selected_adm == "") {
-        return(prev.interactive.plot)
-      }
+      # if (length(input$selected_adm) == 0 || input$selected_adm == "") {
+      #   return(prev.interactive.plot)
+      # }
       
       ### extract selections
-      selected_adm <- input$selected_adm
+      selected_adm <- "Admin-2"
+      selected_state <- input$selected_state
       selected_method <- input$selected_method
       selected_measure <- input$selected_measure
       
@@ -369,17 +387,16 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
       }
       
       prev.interactive.plot <-  tryCatch({
-        suppressWarnings(prevMap.leaflet(res.obj = model_res_selected,
-                                         gadm.shp = CountryInfo$GADM_list_smoothed()[[selected_adm]],
-                                         model.gadm.level = admin_to_num(selected_adm),
-                                         strata.gadm.level = CountryInfo$GADM_strata_level(),
-                                         value.to.plot =selected_measure,
-                                         legend.label = 'Estimates',
-                                         hatching.density = hatching.density.country,
-                                         map.title=NULL,
-                                         threshold.p = selected_threshold,
-                                         use.basemap = CountryInfo$use_basemap(),
-                                         legend.color.reverse=CountryInfo$legend_color_reverse()))
+        suppressWarnings(prevMap.leaflet.alt(res.obj = model_res_selected,
+                                             gadm.shp = CountryInfo$GADM_list_smoothed()[[selected_adm]],
+                                             admin1.focus = selected_state,
+                                             value.to.plot =selected_measure,
+                                             legend.label = 'Estimates',
+                                             hatching.density = hatching.density.country,
+                                             map.title=NULL,
+                                             threshold.p = selected_threshold,
+                                             use.basemap = CountryInfo$use_basemap(),
+                                             legend.color.reverse=CountryInfo$legend_color_reverse()))
       },error = function(e) {
         message(e$message)
         return(NULL)
@@ -530,11 +547,16 @@ mod_res_visual_prev_map_server <- function(id,CountryInfo,AnalysisInfo){
       }
     )
     
+    
+    
+    
   })
 }
 
+
 ## To be copied in the UI
-# mod_res_visual_prev_map_by_state_ui("res_visual_prev_map_by_state_1")
+# mod_result_visual_ui("result_visual_1")
 
 ## To be copied in the server
-# mod_res_visual_prev_map_by_state_server("res_visual_prev_map_by_state_1")
+# mod_result_visual_server("result_visual_1")
+

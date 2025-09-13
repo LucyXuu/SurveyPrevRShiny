@@ -5,7 +5,7 @@ account: jieyixu
 server: rsc.stat.washington.edu
 hostUrl: https://rsc.stat.washington.edu/__api__
 appId: 59
-bundleId: 323
+bundleId: 393
 url: https://rsc.stat.washington.edu/surveyPrevRShinyMICS/
 version: 1
 asMultiple: FALSE

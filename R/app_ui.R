@@ -76,6 +76,7 @@ app_ui <- function(request) {
                                       shinydashboard::menuItem("Model Fitting", tabName = "model_fit", icon = icon("sliders-h")),
                                       shinydashboard::menuItem("Result Visualization", tabName = "res_visual", icon = icon("earth"),
                                                                shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Prevalence Map"), tabName = "res_prev_map",icon = NULL),
+                                                               shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Prevalence Map by State"), tabName = "res_prev_map_state", icon = NULL),
                                                                shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Map Comparison"), tabName = "res_compare_map",icon = NULL),
                                                                shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Scatter Plot"), tabName = "res_scatter",icon = NULL),
                                                                shinydashboard::menuSubItem(HTML("&nbsp &nbsp &nbsp &nbsp Ridge Plot"), tabName = "res_ridge",icon = NULL)),
@@ -124,6 +125,8 @@ app_ui <- function(request) {
                                       # Adding individual content for each subtab
                                       shinydashboard::tabItem(tabName = "res_prev_map",
                                                               mod_res_visual_prev_map_ui("res_visual_prev_map_1")), # Content for Prev Map subtab
+                                      shinydashboard::tabItem(tabName = "res_prev_map_state",
+                                                              mod_res_visual_prev_map_by_state_ui("res_visual_prev_map_by_state_1")),
                                       shinydashboard::tabItem(tabName = "res_compare_map",
                                                               mod_res_visual_multiple_maps_ui("res_visual_multiple_maps_1")), # Content for Map Comparison subtab
                                       shinydashboard::tabItem(tabName = "res_scatter",

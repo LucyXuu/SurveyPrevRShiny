@@ -70,5 +70,22 @@ app_server <- function(input, output, session) {
   # mod_indicator_dictionary_server("indicator_dictionary_1", CountryInfo = CountryInfo, AnalysisInfo = AnalysisInfo, parent_session = session)
   # mod_DHS_API_est_server("DHS_API_est_1", CountryInfo = CountryInfo, AnalysisInfo = AnalysisInfo, parent_session = session)
   
+  # observe url parameter passed
+  observeEvent(session$clientData$url_search, {
+    qs <- parseQueryString(session$clientData$url_search)
+    
+    if (!is.null(qs$tab)) {
+      updateTabItems(session, "Overall_tabs", qs$tab)
+    }
+    if (!is.null(qs$country)) {
+      CountryInfo$country(qs$country)
+    }
+    if (!is.null(qs$year)) {
+      CountryInfo$svyYear_selected(qs$year)
+    }
+    if (!is.null(qs$indicator)) {
+      CountryInfo$svy_indicator_var(qs$indicator)
+    }
+  }, once = TRUE)
 }
 

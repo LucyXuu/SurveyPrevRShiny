@@ -357,7 +357,6 @@ mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo)
       
       ### initialize parameters
       model_res_all <- AnalysisInfo$model_res_list()
-      strat.gadm.level <- CountryInfo$GADM_strata_level()
       model_res_selected <- model_res_all[[selected_method]][[selected_adm]]
       
       
@@ -387,8 +386,8 @@ mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo)
       }
       
       prev.interactive.plot <-  tryCatch({
-        suppressWarnings(prevMap.leaflet.alt(res.obj = model_res_selected,
-                                             gadm.shp = CountryInfo$GADM_list_smoothed()[[selected_adm]],
+        suppressWarnings(surveyPrev::prevMap.web(res.obj = model_res_selected,
+                                             poly.shp = CountryInfo$GADM_list_smoothed()[[selected_adm]],
                                              admin1.focus = selected_state,
                                              value.to.plot =selected_measure,
                                              legend.label = 'Estimates',
@@ -420,12 +419,9 @@ mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo)
     
     output$prev_map_static <- renderPlot({
       
-      if (length(input$selected_adm) == 0 || input$selected_adm == "") {
-        return(NULL)
-      }
-      
       ### initialize parameters
-      selected_adm <- input$selected_adm
+      selected_adm <- "Admin-2"
+      selected_state <- input$selected_state
       selected_method <- input$selected_method
       selected_measure <- input$selected_measure
       
@@ -437,9 +433,6 @@ mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo)
       
       ### load results
       model_res_all <- AnalysisInfo$model_res_list()
-      
-      strat.gadm.level <- CountryInfo$GADM_strata_level()
-      
       model_res_selected <- model_res_all[[selected_method]][[selected_adm]]
       
       ### plot
@@ -453,10 +446,9 @@ mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo)
       
       prev.static.plot <-  tryCatch({
         
-        prev.static.plot <- suppressWarnings(prevMap.static(res.obj = model_res_selected,
-                                                            gadm.shp = CountryInfo$GADM_list_smoothed()[[selected_adm]],
-                                                            model.gadm.level = admin_to_num(selected_adm),
-                                                            strata.gadm.level = CountryInfo$GADM_strata_level(),
+        prev.static.plot <- suppressWarnings(surveyPrev::prevMap(res.obj = model_res_selected,
+                                                            poly.shp = CountryInfo$GADM_list_smoothed()[[selected_adm]],
+                                                            admin1.focus = selected_state,
                                                             value.to.plot =selected_measure,
                                                             threshold.p = selected_threshold,
                                                             legend.label = 'Estimates',
@@ -464,11 +456,14 @@ mod_res_visual_prev_map_by_state_server <- function(id,CountryInfo,AnalysisInfo)
                                                             map.title=NULL))
         
       },error = function(e) {
+        print("got to error")
         message(e$message)
         return(NULL)
+        
       })
       
       prev.map.static.output(prev.static.plot)
+      print(prev.static.plot)
       #message(paste0(input$prev_map$lng,'_',input$map_center$lat,'_', input$map_zoom))
       return(prev.static.plot)
       

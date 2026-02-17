@@ -19,6 +19,7 @@ library(bookdown)
 library(markdown)
 library(grid)
 library(gridExtra)
+library(dplyr)
 
 #library(semantic.dashboard)
 

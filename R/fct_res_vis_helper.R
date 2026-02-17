@@ -22,7 +22,7 @@ prevMap.leaflet.alt <- function(res.obj,
   ### check required packages
   ########################################################
   
-save(gadm.shp, file = "C:/Users/lucyx/Desktop/prevmap_process/gadm_shp.RData")
+#save(gadm.shp, file = "C:/Users/lucyx/Desktop/prevmap_process/gadm_shp.RData")
   
   if (!requireNamespace("leaflegend", quietly = TRUE)) {
     stop("Package 'leaflegend' is required for this function. Please install it with install.packages('leaflegend').")

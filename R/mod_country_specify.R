@@ -145,6 +145,11 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       }
       
     })
+    observe({
+      indicatorme <- CountryInfo$svy_indicator_var()
+      print(indicatorme)
+    })
+    
     
     ### text instruction on downloading the shapefile
     
@@ -411,8 +416,8 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       }
       
       if(CountryInfo$MICS_version()){
-        country_name_list <- MICS.app.countries
-        updateSelectInput(inputId = "country", choices = c('',country_name_list), selected = "Nigeria")
+        country_name_list <- MICS.country.meta$CountryName
+        updateSelectInput(inputId = "country", choices = c('',country_name_list))
       }
       
       
@@ -435,8 +440,21 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
     
     surveyPrev_ind_list <- rv(list = NULL)
     
-    observeEvent(CountryInfo$MICS_version(), {
-      if(CountryInfo$MICS_version()) {
+    # observeEvent(CountryInfo$MICS_version(), {
+    #   if(CountryInfo$MICS_version()) {
+    #     surveyPrev_ind_list <<- ref_tab_mics
+    #     updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+    #   } else {
+    #     surveyPrev_ind_list <<- ref_tab_all
+    #     updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+    #   }
+    # })
+    
+    observeEvent(CountryInfo$country(), {
+      if(CountryInfo$country() != "Nigeria" && CountryInfo$MICS_version()) {
+        surveyPrev_ind_list <<- ref_tab_mics_recode
+        updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+      } else if (CountryInfo$MICS_version()) {
         surveyPrev_ind_list <<- ref_tab_mics
         updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
       } else {
@@ -542,7 +560,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         CountryInfo$svyYear_selected('')
         
         if(CountryInfo$MICS_version()){
-          CountryInfo$svyYear_list(c("2021", "2016"))
+          CountryInfo$svyYear_list(get_survey_year(input$country, survey = "MICS"))
           updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
         } else {
           CountryInfo$svyYear_list(get_survey_year(input$country))
@@ -562,7 +580,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       if(CountryInfo$WHO_version()){
         country_name_list <- WHO.app.countries
       }else if (CountryInfo$MICS_version()){
-        country_name_list <- MICS.app.countries
+        country_name_list <- MICS.country.meta
       }else {
         country_name_list <- sort(DHS.country.meta[['CountryName']])
       }

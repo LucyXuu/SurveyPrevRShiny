@@ -9,15 +9,10 @@
 ###  Given a country, find the available surveys (years)
 ###############################################################
 
-get_survey_year <- function(country=NULL, survey="DHS"){
+get_survey_year <- function(country=NULL){
   
   if(is.null(country)){return(NULL)}
-  if(survey == "DHS"){
-    surveys <- DHS.survey.meta
-  } else if (survey == "MICS") {
-    surveys <- MICS.survey.meta
-  }
-  
+  surveys <- DHS.survey.meta
   
   # To see the structure of the returned surveys data frame
   country_svy <- surveys[surveys$CountryName == country, ]

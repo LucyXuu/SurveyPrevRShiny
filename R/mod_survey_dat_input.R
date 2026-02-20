@@ -122,25 +122,8 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     ###############################################################
     ### change UI layout of data button and file upload content based on MICS_version
     ###############################################################
-    # observeEvent(CountryInfo$MICS_version(), {
-    #   if (CountryInfo$MICS_version()){ # && CountryInfo$country() == "Nigeria"){
-    #     shinyjs::hide("Svy_dataFile")
-    #     output$data_button <- renderUI({
-    #       actionButton(ns("upload_Svy_Data"), "Load Survey Data")
-    #     })
-    #   } else {
-    #     shinyjs::show("Svy_dataFile")
-    #     output$data_button <- renderUI({
-    #       actionButton(ns("upload_Svy_Data"), "Upload Survey Data")
-    #     })
-    #   }
-    # })
-    
-    ###############################################################
-    ### change UI layout of data button and file upload content based on MICS_version
-    ###############################################################
-    observeEvent(CountryInfo$country(), {
-      if (CountryInfo$MICS_version() && CountryInfo$country() == "Nigeria"){ 
+    observeEvent(CountryInfo$MICS_version(), {
+      if (CountryInfo$MICS_version()){
         shinyjs::hide("Svy_dataFile")
         output$data_button <- renderUI({
           actionButton(ns("upload_Svy_Data"), "Load Survey Data")
@@ -563,6 +546,36 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     ###############################################################
     ### manually upload data
     ###############################################################
+    
+    observeEvent(CountryInfo$use_preloaded_Zambia(), {
+      
+      if(CountryInfo$use_preloaded_Zambia()){
+        
+        recode.data <- as.data.frame(zmb.ex.IR.dat)
+        CountryInfo$update_svy_dat(recode_abbrev='IR', new_dat=recode.data)
+        
+        GPS.dat <- zmb.ex.GPS
+        CountryInfo$svy_GPS_dat(GPS.dat)
+        
+      }else{return()}
+      
+      
+    })
+    
+    observeEvent(CountryInfo$use_preloaded_Madagascar(), {
+      
+      if(CountryInfo$use_preloaded_Madagascar()){
+        
+        recode.data <- as.data.frame(mdg.ex.KR.dat)
+        CountryInfo$update_svy_dat(recode_abbrev='KR', new_dat=recode.data)
+        
+        GPS.dat <- mdg.ex.GPS
+        CountryInfo$svy_GPS_dat(GPS.dat)
+        
+      }else{return()}
+      
+      
+    })
     
     
     observeEvent(input$upload_Svy_Data, {

@@ -93,18 +93,8 @@ ref_tab_mics$Title <- c("Child Health",
                         "Child Health",
                         "Maternal Health")
 
-ref_tab_mics$bh <- c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-ref_tab_mics$ch <- c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-ref_tab_mics$fs <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-ref_tab_mics$hh <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-ref_tab_mics$hl <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-ref_tab_mics$mn <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-ref_tab_mics$wm <- c(FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-
 ref_tab_mics <- ref_tab_mics[, c(-1)]
 
-cols <- c("bh", "ch", "fs", "hh", "hl", "mn", "wm")
-ref_tab_mics_recode <- ref_tab_mics[rowSums(ref_tab_mics[cols]) != 0, ]
 
 ###############################################################
 ### load DHS meta data
@@ -316,19 +306,9 @@ WHO.app.countries <- c('Benin', 'Burkina Faso',
 
 WHO.app.countries.ISO3 <- DHS.country.meta[DHS.country.meta$CountryName %in% WHO.app.countries,]$ISO3_CountryCode
 
-### MICS available countries
-MICS.country.meta <- data.frame(
-  CountryName = c("Nigeria", "Honduras"),
-  ISO2_CountryCode = c("NG", "HN"),
-  ISO3_CountryCode = c("NGA", "HND"),
-  stringsAsFactors = FALSE
-)
+MICS.app.countries <- c("Nigeria")
+WHO.app.countries.ISO3 <- DHS.country.meta[DHS.country.meta$CountryName %in% MICS.app.countries,]$ISO3_CountryCode
 
-MICS.survey.meta <- data.frame(
-  CountryName = c("Nigeria", "Nigeria", "Honduras"),
-  SurveyYear  = c("2016", "2021", "2019"),
-  stringsAsFactors = FALSE
-)
 
 ### save linkage file for WHO boundaries across admin levels
 if(FALSE){

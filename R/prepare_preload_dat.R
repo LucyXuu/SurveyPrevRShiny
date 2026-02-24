@@ -17,6 +17,10 @@ ref_tab_mics$ID <- c("CH_VACC_C_DP1", "CH_VACC_C_DP3", "CH_VACC_C_BCG", "CM_ECMR
                      "CH_VACC_C_OP0", "CH_VACC_C_IPV", "CH_VACC_C_MSL", "CH_VACC_C_YFI", "RH_PCCT_C_DY2"
 )
 
+ref_tab_mics$ch <- c(FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
+ref_tab_mics$wm <- c(FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
+ref_tab_mics$bh <- c(FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
+
 ref_tab_mics$Description <- c("Children age 12-23 months who had received third dose of DTP1 vaccine",
                               "Children age 12-23 months who had received third dose of DTP3 vaccine",
                               "Children age 12-23 months who had recieved BCG containing vaccine",
@@ -92,6 +96,8 @@ ref_tab_mics$Title <- c("Child Health",
                         "Child Health",
                         "Child Health",
                         "Maternal Health")
+
+
 
 ref_tab_mics <- ref_tab_mics[, c(-1)]
 
@@ -306,7 +312,7 @@ WHO.app.countries <- c('Benin', 'Burkina Faso',
 
 WHO.app.countries.ISO3 <- DHS.country.meta[DHS.country.meta$CountryName %in% WHO.app.countries,]$ISO3_CountryCode
 
-MICS.app.countries <- c("Nigeria")
+MICS.app.countries <- c("Nigeria", "Honduras")
 WHO.app.countries.ISO3 <- DHS.country.meta[DHS.country.meta$CountryName %in% MICS.app.countries,]$ISO3_CountryCode
 
 

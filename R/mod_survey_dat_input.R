@@ -51,7 +51,10 @@ mod_survey_dat_input_ui <- function(id) {
                                   div(style = "margin: auto;float: left;width: min(100%,400px);",
                                       fileInput(ns("Svy_dataFile"),
                                                 accept='.zip',
-                                                with_red_star("Upload DHS survey data (.zip)")),
+                                                with_red_star("Upload survey data (.zip)")),
+                                      fileInput(ns("Svy_GPSFile"),
+                                                accept='.zip',
+                                                with_red_star("Upload GPS data (.zip)")),
                                       
                                       #actionButton(ns("upload_Svy_Data"), "Submit Survey Data"),
                                       uiOutput(ns("data_button")),
@@ -124,12 +127,24 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     ###############################################################
     observeEvent(CountryInfo$MICS_version(), {
       if (CountryInfo$MICS_version()){
-        shinyjs::hide("Svy_dataFile")
-        output$data_button <- renderUI({
-          actionButton(ns("upload_Svy_Data"), "Load Survey Data")
+        observeEvent(CountryInfo$country(), {
+          if(CountryInfo$country() == "Nigeria"){
+            shinyjs::hide("Svy_dataFile")
+            shinyjs::hide("Svy_GPSFile")
+            output$data_button <- renderUI({
+              actionButton(ns("upload_Svy_Data"), "Load Survey Data")
+            })
+          } else {
+            shinyjs::show("Svy_dataFile")
+            shinyjs::show("Svy_GPSFile")
+            output$data_button <- renderUI({
+              actionButton(ns("upload_Svy_Data"), "Upload Survey and GPS Data")
+            })
+          }
         })
       } else {
         shinyjs::show("Svy_dataFile")
+        shinyjs::hide("Svy_GPSFile")
         output$data_button <- renderUI({
           actionButton(ns("upload_Svy_Data"), "Upload Survey Data")
         })
@@ -245,69 +260,6 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
         })
       }
     })
-    
-    # output$text_display <- renderUI({
-    #   req(CountryInfo$country())
-    #   req(CountryInfo$svy_indicator_var())
-    #   
-    #   ### country information
-    #   country <- CountryInfo$country()
-    #   svy_year <- CountryInfo$svyYear_selected()
-    #   admin_level <- CountryInfo$GADM_display_selected_level()
-    #   #indicator_description <- surveyPrev_ind_list[surveyPrev_ind_list$ID==input$Svy_indicator,]$Description
-    #   
-    #   ### which recode (abbreviation) are needed for this indicator
-    #   recode_for_ind_abbrev(recode_list_abbrev[which(ref_tab_all[ref_tab_all$ID==CountryInfo$svy_indicator_var(),
-    #                                                              recode_list_abbrev]==T)])
-    #   
-    #   ### which recode (full names) are needed for this indicator
-    #   recode_for_ind_names(recode_list_names[which(ref_tab_all[ref_tab_all$ID==CountryInfo$svy_indicator_var(),
-    #                                                            recode_list_abbrev]==T)])
-    #   
-    #   
-    #   
-    #   recode.avail <- check_dat_avail(country =country , svy_year =svy_year , indicator =CountryInfo$svy_indicator_var())
-    #   
-    #   if(length(recode.avail$missing_recode)>0){
-    #     
-    #     return.text <- HTML(paste0(
-    #       "<p style='font-size: large;'>",
-    #       "<strong> DHS ", svy_year, "</strong> survey ",
-    #       "in <strong>", country,"</strong> <br>",
-    #       "  <font color='red'>does not support estimation </font> for",
-    #       "<span style='background-color: #D0E4F7;'>",
-    #       "<br> <strong>",CountryInfo$svy_indicator_des(), "</strong>",
-    #       "</span>. <br>",
-    #       "Please switch to another indicator or survey.",
-    #       "</p>"
-    #       #"<br>",
-    #       #"<hr style='border-top-color: #E0E0E0;'>"
-    #     ))
-    #     
-    #     
-    #     return(return.text)
-    #     
-    #   }
-    #   
-    #   ### display the recode as, full names (abbreviation), format
-    #   recode_for_display <- paste(recode_for_ind_abbrev(), " (", recode_for_ind_names(), ")", sep="")
-    #   
-    #   HTML(paste0(
-    #     "<p style='font-size: large;'>",
-    #     "Based on your goal of estimating ",
-    #     "<span style='background-color: #D0E4F7;'>",
-    #     "<br> <strong>",CountryInfo$svy_indicator_des(), "</strong>, ",
-    #     "</span> <br> in <strong>", country,
-    #     "</strong> with <strong> DHS ", svy_year, "</strong> survey ",
-    #     "<br> Please upload your data in ",
-    #     "<span style='background-color: #D0E4F7;'>",
-    #     "<strong>",concatenate_vector_with_and(recode_for_display), "</strong> </span>.",
-    #     "</p>"
-    #     #"<br>",
-    #     #"<hr style='border-top-color: #E0E0E0;'>"
-    #   ))
-    #   
-    # })
     
     ###############################################################
     ### text instructions on manually upload data
@@ -443,105 +395,6 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       }
     })
     
-    #########################
-    
-    # output$manual_upload_text <- renderUI({
-    #   
-    #   req(CountryInfo$country())
-    #   req(CountryInfo$svy_indicator_var())
-    #   
-    #   
-    #   ### which file(s) listed on the DHS website to download
-    #   dhs_dat_names <- unlist(lapply(recode_for_ind_names(), function(recode) {
-    #     find_DHS_dat_name(country= CountryInfo$country(),
-    #                       svy_year = CountryInfo$svyYear_selected(),
-    #                       recode=recode)
-    #   }))
-    #   
-    #   ### which GPS file to download
-    #   dhs_GPS_names <- find_DHS_dat_name(country= CountryInfo$country(),
-    #                                      svy_year = CountryInfo$svyYear_selected(),
-    #                                      recode='Geographic Data')
-    #   
-    #   dhs_dat_list_items <- paste0(
-    #     "<li><span style='background-color: #D0E4F7; padding: 3px; border-radius: 3px;'><strong>",
-    #     toupper(dhs_dat_names),' (',recode_for_ind_names(),')',
-    #     "</strong></span></li>"
-    #   )
-    #   # Combine all items into a single string
-    #   dhs_dat_list_items_display <- paste(dhs_dat_list_items, collapse = "")
-    #   
-    #   # Define the HTML content with a refined style
-    #   upload_instruct_text <- # Add the HTML with footnote implementation
-    #     upload_instruct_text <- # Add the HTML with alphabet-indexed footnotes
-    #     upload_instruct_text <- HTML(paste0(
-    #       "<p style='font-size: medium; margin-bottom: 20px; line-height: 2;'>",  # Add line-height for larger spacing
-    #       "Please follow the steps below to select and download data from the DHS website.<sup>a</sup>",  # First footnote reference
-    #       "</p>",
-    #       "<ol style='font-size: medium; margin-top: 0; margin-bottom: 20px; line-height: 2;'>",
-    #       "<li>",
-    #       "Navigate to the <a href='https://dhsprogram.com/Data' target = '_blank'><strong>DHS website</strong></a> and locate the download section. ",
-    #       "Reference <a href='https://dhsprogram.com/data/Using-DataSets-for-Analysis.cfm' target = '_blank'><strong>this page </strong></a> for detailed instructions.",
-    #       "</li>",
-    #       "<li>",
-    #       "Select data with the following file names: <br>",
-    #       "<ul style='list-style-type: disc; margin-left: 20px; line-height: 2;'>",
-    #       "<li>",
-    #       "Survey Datasets: ",
-    #       "<ul style='list-style-type: disc; margin-left: 20px; line-height: 2;'>",
-    #       dhs_dat_list_items_display,  # Dynamically generated list of survey datasets
-    #       "</ul>",
-    #       "</li>",
-    #       "<li>",
-    #       "Geographic Datasets: ",
-    #       "<ul style='list-style-type: disc; margin-left: 20px; line-height: 2;'>",
-    #       "<li>",
-    #       "<span style='background-color: #D0E4F7; padding: 3px; border-radius: 3px;'>",
-    #       "<strong>", toupper(dhs_GPS_names), ' (Geographic Data)',"</strong>",
-    #       "</span>",
-    #       "</li>",
-    #       "</ul>",
-    #       "</li>",
-    #       "</ul>",
-    #       "</li>",
-    #       "<li>",
-    #       "Include all needed files in a single download request.",
-    #       "</li>",
-    #       "<li>",
-    #       "Upload the downloaded <strong>.zip file</strong> using the upload bar provided below.<sup>b</sup>",  # Second footnote reference
-    #       "</li>",
-    #       "</ol>",
-    #       "<hr style='border-top-color: #E0E0E0; margin-top: 20px;'>",
-    #       "<ol style='font-size: medium; margin-left: 20px; line-height: 2;' type='a'>",  # Alphabet indexing for footnotes
-    #       "<li>",
-    #       "An account is needed for accessing DHS data, please register at ",
-    #       "<a href='https://dhsprogram.com/data/new-user-registration.cfm' target = '_blank'><strong>here. </strong></a>",
-    #       "The approval process might take up to a few days.",
-    #       "</li>",
-    #       "<li>",
-    #       "If the browser (such as Safari) automatically unzips files on download, please manually re-zip them to a single file and upload.",
-    #       "</li>",
-    #       "</ol>"
-    #     ))
-    #   
-    #   
-    #   
-    #   
-    #   inst.modal.text(upload_instruct_text)
-    #   
-    #   HTML(paste0(
-    #     "<p style='font-size: large; margin-bottom: 20px;'>",
-    #     "Please upload the corresponding DHS datasets, click ",
-    #     actionButton(
-    #       ns("triggerModal"),  # Button ID to trigger the modal
-    #       "here",
-    #       style = "border: none; background: none; color: blue; padding: 0; margin-bottom: 2px; font-size: large;"  # Larger font
-    #     ),
-    #     " for detailed instructions.",
-    #     "<hr style='border-top-color: #E0E0E0; margin-top: 20px;'>"))
-    #   
-    # })
-    
     
     ###############################################################
     ### manually upload data
@@ -581,23 +434,34 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     observeEvent(input$upload_Svy_Data, {
       # # Check if a file has been uploaded
       if (CountryInfo$MICS_version()) {
-        indicator <- CountryInfo$svy_indicator_var()
-        year <- CountryInfo$svyYear_selected()
-        file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
-        if(file.exists(file_path)){
-          load(file_path)
-          CountryInfo$svy_analysis_dat(data)
+        observeEvent(CountryInfo$country(), {
+          if(CountryInfo$country() == "Nigeria") {
+            indicator <- CountryInfo$svy_indicator_var()
+            year <- CountryInfo$svyYear_selected()
+            file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
+            if(file.exists(file_path)){
+              load(file_path)
+              CountryInfo$svy_analysis_dat(data)
+              
+              load(paste0("data/MICS/NGcluster_", year, ".RData"))
+            } else {
+              showModal(modalDialog(
+                title = "Data for indicator does not exist currently",
+                paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
+                easyClose = TRUE,
+                footer = modalButton("OK")
+              ))
+              geo <- NULL
+            }
+          } else {
+            if(is.null(input$Svy_dataFile) || is.null(input$Svy_GPSFile)) {
+              showNoFileSelectedModal()
+            }
+          }
           
-          load(paste0("data/MICS/NGcluster_", year, ".RData"))
-        } else {
-          showModal(modalDialog(
-            title = "Data for indicator does not exist currently",
-            paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
-            easyClose = TRUE,
-            footer = modalButton("OK")
-          ))
-          geo <- NULL
-        }
+          
+        })
+        
       } else if (is.null(input$Svy_dataFile)) {
         showNoFileSelectedModal()
         return()
@@ -639,63 +503,80 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       
       ## set survey recode data
       
-      for (i in 1:length(recode_names_list)){
-        #end for loop if MICS version, and show the spinner so the load process follows intuition
-        if(CountryInfo$MICS_version()){
+      if (CountryInfo$MICS_version()) {
+        observeEvent(CountryInfo$country(), {
+          if(CountryInfo$country() == "Nigeria") {
+            session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                             message = paste0("Loading data, please wait ...")))
+            Sys.sleep(1)
+            session$sendCustomMessage('controlSpinner', list(action = "hide"))
+          } else {
+            session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                             message = paste0("Parsing .zip files. Please wait...")))
+            
+            recode_path <- mics_find_recode_path(file_path = file_path,
+                                                 indicator = CountryInfo$svy_indicator_var())
+            recode.data <- suppressWarnings(haven::read_sav(recode_path))
+            recode.data <- as.data.frame(recode.data)
+            
+            
+            analysis_data <- process_mics_data(survey_data = recode.data, 
+                                               indicator = CountryInfo$svy_indicator_var())
+            
+            session$sendCustomMessage('controlSpinner', list(action = "hide"))
+          }
+        })
+      } else {
+        for (i in 1:length(recode_names_list)){
           session$sendCustomMessage('controlSpinner', list(action = "show",
-                                                           message = paste0("Loading data, please wait ...")))
-          Sys.sleep(1)
-          session$sendCustomMessage('controlSpinner', list(action = "hide"))
-          next
-        }
-        
-        session$sendCustomMessage('controlSpinner', list(action = "show",
-                                                         message = paste0("Parsing .zip files. Please wait...")))
-        
-        file_prefix <- find_DHS_dat_name(country,svy_year,recode =recode_names_list[i] )
-        
-        recode_path_found <- find_recode_path(file_path = file_path,
-                                              recode_file =file_prefix,
-                                              extensions = 'DTA')
-        
-        session$sendCustomMessage('controlSpinner', list(action = "hide"))
-        
-        if(!is.null(recode_path_found)){
-          #message(paste0(recode_names_list[i] ,' recode found at: ',(recode_path_found)))
+                                                           message = paste0("Parsing .zip files. Please wait...")))
           
-          session$sendCustomMessage('controlSpinner', list(action = "show",
-                                                           message = paste0(recode_names_list[i],
-                                                                            " found, loading...")))
+          file_prefix <- find_DHS_dat_name(country,svy_year,recode =recode_names_list[i] )
           
+          recode_path_found <- find_recode_path(file_path = file_path,
+                                                recode_file =file_prefix,
+                                                extensions = 'DTA')
           
-          
-          recode.data <- suppressWarnings(haven::read_dta(recode_path_found))
-          
-          recode.data <- as.data.frame(recode.data)
-          
-          #mdg.ex.KR.dat <- recode.data
-          #save(mdg.ex.KR.dat, file='E:/Dropbox/YunhanJon/SurveyPrevRShiny/data/mdg_example_KR_dat.rda')
-          
-          
-          #recode.data <- as.data.frame(zmb.ex.IR.dat)
-          
-          #Sys.sleep(1)
-          
-          CountryInfo$update_svy_dat(recode_abbrev=recode_for_ind_abbrev()[i], new_dat=recode.data)
-          
-          new_dat_num <- new_dat_num+1
-          #message(paste0(recode_for_ind_abbrev()[i]))
           session$sendCustomMessage('controlSpinner', list(action = "hide"))
           
-          
-          
-          
+          if(!is.null(recode_path_found)){
+            #message(paste0(recode_names_list[i] ,' recode found at: ',(recode_path_found)))
+            
+            session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                             message = paste0(recode_names_list[i],
+                                                                              " found, loading...")))
+            
+            
+            
+            recode.data <- suppressWarnings(haven::read_dta(recode_path_found))
+            
+            recode.data <- as.data.frame(recode.data)
+            
+            #mdg.ex.KR.dat <- recode.data
+            #save(mdg.ex.KR.dat, file='E:/Dropbox/YunhanJon/SurveyPrevRShiny/data/mdg_example_KR_dat.rda')
+            
+            
+            #recode.data <- as.data.frame(zmb.ex.IR.dat)
+            
+            #Sys.sleep(1)
+            
+            CountryInfo$update_svy_dat(recode_abbrev=recode_for_ind_abbrev()[i], new_dat=recode.data)
+            
+            new_dat_num <- new_dat_num+1
+            #message(paste0(recode_for_ind_abbrev()[i]))
+            session$sendCustomMessage('controlSpinner', list(action = "hide"))
+            
+            
+            
+            
+          }
         }
       }
       
       ## set survey GPS data
       
       if(CountryInfo$MICS_version()) {
+        
         GPS.dat <- geo
         Sys.sleep(1)
         
@@ -897,6 +778,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     
     
     ### prepare analysis data set
+    ### DHS
     #observeEvent(data_pre_snapshot(),{
     observeEvent(NULL,{
       

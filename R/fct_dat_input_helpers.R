@@ -9,10 +9,14 @@
 ###  Given a country, find the available surveys (years)
 ###############################################################
 
-get_survey_year <- function(country=NULL){
+get_survey_year <- function(country=NULL, DHS = TRUE){
   
   if(is.null(country)){return(NULL)}
-  surveys <- DHS.survey.meta
+  if(DHS){
+    surveys <- DHS.survey.meta
+  } else {
+    surveys <- MICS.survey.meta
+  }
   
   # To see the structure of the returned surveys data frame
   country_svy <- surveys[surveys$CountryName == country, ]
@@ -21,6 +25,43 @@ get_survey_year <- function(country=NULL){
   return(country_svy_years)
   
   
+}
+
+###
+mics_find_recode_path <- function(file_path = NULL,
+                                  indicator = NULL) {
+  temp <- tempfile()
+  unzip(file_path, exdir = temp)
+  
+  mics_recode_list_abbrev <- c('bh', 'wm', 'ch')
+  #print(indicator)
+  required_recode <- recode_list_abbrev[which(ref_tab_mics[ref_tab_mics$ID==indicator,
+                                                           recode_list_abbrev]==T)]
+  
+  sav_files <- list.files(
+    temp,
+    pattern = "\\.sav$",
+    recursive = TRUE,
+    full.names = TRUE,
+    ignore.case = TRUE
+  )
+  
+  if (length(sav_files) == 0) return(NULL)
+  pattern <- paste0("^", required_recode, "\\.sav$")
+  matched <- sav_files[grepl(pattern, basename(sav_files), ignore.case = TRUE)]
+  if (length(matched) == 0) return(NULL)
+  return(matched[1])
+}
+
+process_mics_data <- function(survey_data = NULL,
+                              indicator = NULL) {
+  if(indicator == "RH_ANCN_W_N4P") {
+    return(process_ANC(survey_data))
+  } else if(indicator == "CM_ECMR_C_NNF") {
+    return(process_NMR(survey_data))
+  } else if(indicator == "CH_VACC_C_DP3") {
+    return(process_DTP3(survey_data))
+  }
 }
 
 
@@ -72,7 +113,6 @@ find_DHS_dat_name <- function(country,svy_year,
     return(NULL)
   })
 }
-
 
 
 

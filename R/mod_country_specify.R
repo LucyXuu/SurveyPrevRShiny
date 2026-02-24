@@ -542,7 +542,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         CountryInfo$svyYear_selected('')
         
         if(CountryInfo$MICS_version()){
-          CountryInfo$svyYear_list(c("2021", "2016"))
+          CountryInfo$svyYear_list(get_survey_year(input$country, DHS=FALSE))
           updateSelectInput(inputId = "Svy_year", choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
         } else {
           CountryInfo$svyYear_list(get_survey_year(input$country))
@@ -588,7 +588,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         
         ### Update country info
         if(CountryInfo$MICS_version()){
-          CountryInfo$svyYear_list(c("2021", "2016"))
+          CountryInfo$svyYear_list(get_survey_year(input$country, DHS=FALSE))
           CountryInfo$svyYear_selected('')
           updateSelectInput(inputId = "Svy_year",
                             choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)))
@@ -690,7 +690,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
         
         ### Update country info
         if(CountryInfo$MICS_version()){
-          CountryInfo$svyYear_list(c("2021", "2016"))
+          CountryInfo$svyYear_list(get_survey_year(input$country, DHS=FALSE))
           updateSelectInput(inputId = "Svy_year",
                             choices = c('',sort(CountryInfo$svyYear_list(),decreasing = T)),
                             selected=CountryInfo$svyYear_selected())

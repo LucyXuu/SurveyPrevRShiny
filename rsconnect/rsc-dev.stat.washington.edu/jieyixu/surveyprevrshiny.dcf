@@ -1,12 +1,12 @@
-name: surveyprevrshiny3
+name: surveyprevrshiny
 title: SurveyPrevRShiny
 username: jieyixu
 account: jieyixu
 server: rsc-dev.stat.washington.edu
 hostUrl: https://rsc-dev.stat.washington.edu/__api__
-appId: 5
-bundleId: 23
-url: https://rsc-dev.stat.washington.edu/content/73f5c2e5-9642-48d7-b3ed-392fddb65a6e/
+appId: 3
+bundleId: 6
+url: https://rsc-dev.stat.washington.edu/content/56339fe6-a01f-49e0-a143-e0b8bf7d0e32/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE

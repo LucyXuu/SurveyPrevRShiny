@@ -20,7 +20,7 @@ ref_tab_mics$ID <- c("CH_VACC_C_DP1", "CH_VACC_C_DP3", "CH_VACC_C_BCG", "CM_ECMR
 ref_tab_mics$ch <- c(FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
 ref_tab_mics$wm <- c(FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
 ref_tab_mics$bh <- c(FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
-
+ref_tab_mics$notNGExclusive <- c(FALSE,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
 ref_tab_mics$Description <- c("Children age 12-23 months who had received third dose of DTP1 vaccine",
                               "Children age 12-23 months who had received third dose of DTP3 vaccine",
                               "Children age 12-23 months who had recieved BCG containing vaccine",

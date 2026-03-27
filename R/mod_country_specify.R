@@ -437,8 +437,15 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
     
     observeEvent(CountryInfo$MICS_version(), {
       if(CountryInfo$MICS_version()) {
-        surveyPrev_ind_list <<- ref_tab_mics
-        updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+        observeEvent(CountryInfo$country(), {
+          if (CountryInfo$country() == "Nigeria") {
+            surveyPrev_ind_list <<- ref_tab_mics
+          } else {
+            surveyPrev_ind_list <<- ref_tab_mics %>%
+              dplyr::filter(notNGExclusive)
+          }
+          updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))
+        })
       } else {
         surveyPrev_ind_list <<- ref_tab_all
         updateSelectInput(inputId = "Svy_ind_group", choices = sort(unique(surveyPrev_ind_list$Topic),decreasing = F))

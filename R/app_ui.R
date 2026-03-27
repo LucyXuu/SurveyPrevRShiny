@@ -67,11 +67,10 @@ app_ui <- function(request) {
     # Your application UI logic
     shinydashboard::dashboardPage(skin = "black",
                                   #shinydashboard::dashboardHeader(title = "Small Area Estimation for Improving Maternal Health in the region of Africa",titleWidth='750px'),
-                                  shinydashboard::dashboardHeader(title = "Small Area Estimation for Improving Health in LMICs",titleWidth='550px'),
+                                  shinydashboard::dashboardHeader(title = "Small Area Estimation for Improving Health in LMICs - MICS survey",titleWidth='650px'),
                                   shinydashboard::dashboardSidebar(
                                     shinydashboard::sidebarMenu(
                                       id = "Overall_tabs", ## very important for switching between panels
-                                      shinydashboard::menuItem(HTML("&nbsp Getting Started"), tabName = "get_start", icon = icon("home")),
                                       shinydashboard::menuItem("Country Specification", tabName = "country_spec", icon = icon("globe")),
                                       shinydashboard::menuItem("Data Upload", tabName = "data_upload", icon = icon("database")),
                                       shinydashboard::menuItem("Model Fitting", tabName = "model_fit", icon = icon("sliders-h")),

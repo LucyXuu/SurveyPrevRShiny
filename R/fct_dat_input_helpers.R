@@ -8,7 +8,7 @@
 ###############################################################
 ###  Given a country, find the available surveys (years)
 ###############################################################
-
+library(lwgeom)
 get_survey_year <- function(country=NULL, DHS = TRUE){
   
   if(is.null(country)){return(NULL)}
@@ -56,12 +56,47 @@ mics_find_recode_path <- function(file_path = NULL,
 process_mics_data <- function(survey_data = NULL,
                               indicator = NULL) {
   if(indicator == "RH_ANCN_W_N4P") {
-    return(process_ANC(survey_data))
+    return(MICSprev::process_ANC(survey_data))
   } else if(indicator == "CM_ECMR_C_NNF") {
-    return(process_NMR(survey_data))
+    return(MICSprev::process_NMR(survey_data))
   } else if(indicator == "CH_VACC_C_DP3") {
-    return(process_DTP3(survey_data))
+    return(MICSprev::process_DTP3(survey_data))
   }
+}
+
+mics_find_gps_data <- function(file_path = NULL,
+                               country = NULL) {
+  country_iso2 <- DHS.country.meta[DHS.country.meta$CountryName == country, ]$ISO2_CountryCode
+  country_iso3 <- DHS.country.meta[DHS.country.meta$CountryName == country, ]$ISO3_CountryCode
+  max_country_year <- max(as.numeric(MICS.survey.meta[MICS.survey.meta$DHS_CountryCode == country_iso2, ]$SurveyYear))
+  outer_temp <- tempfile()
+  correct_file_name <- paste0(country, "MICS", max_country_year,"GPS")
+  unzip(file_path, exdir = outer_temp)
+  country_gps_folder <- paste0(country_iso3, "_", max_country_year, "_MICS_v01_M")
+  print(country_gps_folder)
+  country_folder_path <- file.path(
+    outer_temp,
+    "MICS Datasets",
+    country_gps_folder
+  )
+  inner_zip_path <- list.files(country_folder_path,
+                               pattern = "\\.zip$",
+                               full.names = TRUE,
+                               recursive = TRUE)
+  print(inner_zip_path)
+  inner_zip_path <- inner_zip_path[
+    grepl(correct_file_name, inner_zip_path)
+  ]
+  temp <- tempfile()
+  unzip(inner_zip_path[1], exdir = temp)
+  shp_file <- list.files(temp,
+                         pattern = "\\.shp$",
+                         full.names = TRUE,
+                         recursive = TRUE)
+  shp_file <- shp_file[
+    grepl(correct_file_name, shp_file)
+  ]
+  MICSprev::process_geo_mics(country.name = country, gps_path = shp_file, year = max_country_year)
 }
 
 

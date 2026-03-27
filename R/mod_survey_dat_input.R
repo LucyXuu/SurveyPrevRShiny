@@ -169,30 +169,114 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     
     observeEvent(CountryInfo$MICS_version(), {
       if (CountryInfo$MICS_version()) {
-        
-        
         output$text_display <- renderUI({
+          
+          req(CountryInfo$MICS_version())
           req(CountryInfo$country())
           req(CountryInfo$svy_indicator_var())
           
-          ### country information
+          if (!CountryInfo$MICS_version()) {
+            return(NULL)
+          }
+          
           country <- CountryInfo$country()
           svy_year <- CountryInfo$svyYear_selected()
-          admin_level <- CountryInfo$GADM_display_selected_level()
           
-          HTML(paste0(
-            "<p style='font-size: large;'>",
-            "You've selected to estimate ",
-            "<span style='background-color: #D0E4F7;'>",
-            "<br> <strong>",CountryInfo$svy_indicator_des(), "</strong>, ",
-            "</span> <br> in <strong>", country,
-            "</strong> with <strong> MICS ", svy_year, "</strong> survey ",
-            "</p>"
-            #"<br>",
-            #"<hr style='border-top-color: #E0E0E0;'>"
-          ))
+          if (country == "Nigeria") {
+            
+            HTML(paste0(
+              "<p style='font-size: large;'>",
+              "You've selected to estimate ",
+              "<span style='background-color: #D0E4F7;'>",
+              "<br><strong>", CountryInfo$svy_indicator_des(), "</strong>",
+              "</span><br>",
+              "in <strong>", country,
+              "</strong> with <strong>MICS ", svy_year, "</strong> survey.",
+              "</p>"
+            ))
+            
+          } else {
+            
+            file_name <- paste0(country, " MICS6 SPSS Datasets.zip")
+            
+            HTML(paste0(
+              "<p style='font-size: large;'>",
+              "Based on your goal of estimating ",
+              "<span style='background-color: #D0E4F7;'>",
+              "<br><strong>", CountryInfo$svy_indicator_des(), "</strong>",
+              "</span><br>",
+              "in <strong>", country,
+              "</strong> with <strong>MICS ", svy_year, "</strong> survey.",
+              "<br><br>Please upload your data ",
+              "<span style='background-color: #D0E4F7;'>",
+              "<strong>", file_name, "</strong>",
+              "</span>.",
+              "<br><br>Please also upload the GPS data ",
+              "<span style='background-color: #D0E4F7;'>",
+              "<strong>MICS Datasets.zip</strong>",
+              "</span>, as downloaded from the MICS website.",
+              "</p>"
+            ))
+            
+          }
           
         })
+        # observeEvent(CountryInfo$country(), {
+        #   if(CountryInfo$country() == "Nigeria"){
+        #     output$text_display <- renderUI({
+        #       req(CountryInfo$country())
+        #       req(CountryInfo$svy_indicator_var())
+        #       
+        #       ### country information
+        #       country <- CountryInfo$country()
+        #       svy_year <- CountryInfo$svyYear_selected()
+        #       admin_level <- CountryInfo$GADM_display_selected_level()
+        #       
+        #       HTML(paste0(
+        #         "<p style='font-size: large;'>",
+        #         "You've selected to estimate ",
+        #         "<span style='background-color: #D0E4F7;'>",
+        #         "<br> <strong>",CountryInfo$svy_indicator_des(), "</strong>, ",
+        #         "</span> <br> in <strong>", country,
+        #         "</strong> with <strong> MICS ", svy_year, "</strong> survey ",
+        #         "</p>"
+        #         #"<br>",
+        #         #"<hr style='border-top-color: #E0E0E0;'>"
+        #       ))
+        #       
+        #     })
+        #   } else {
+        #     ### country information
+        #     country <- CountryInfo$country()
+        #     svy_year <- CountryInfo$svyYear_selected()
+        #     file_name <- paste0(country, " MICS6 SPSS Datasets.zip")
+        #     HTML(paste0(
+        #       "<p style='font-size: large;'>",
+        #       "Based on your goal of estimating ",
+        #       "<span style='background-color: #D0E4F7;'>",
+        #       "<br><strong>", CountryInfo$svy_indicator_des(), "</strong>",
+        #       "</span><br>",
+        #       "in <strong>", country,
+        #       "</strong> with <strong>MICS ", svy_year, "</strong> survey.",
+        #       
+        #       "<br><br>Please upload your data called ",
+        #       "<span style='background-color: #D0E4F7;'>",
+        #       "<strong>", file_name, "</strong>",
+        #       "</span>.",
+        #       
+        #       "<br><br>Please also opload the GPS data called ",
+        #       "<span style='background-color: #D0E4F7;'>",
+        #       "<strong>MICS Datasets.zip</strong>",
+        #       "</span>, as downloaded from the MICS website.",
+        #       
+        #       "</p>"
+        #     ))
+        #   }
+        #   
+        # })
+        
+        
+        
         
         
       } else {
@@ -430,37 +514,35 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       
     })
     
-    
+    ### check whether upload is triggered, if so, use the country at that point to 
     observeEvent(input$upload_Svy_Data, {
       # # Check if a file has been uploaded
       if (CountryInfo$MICS_version()) {
-        observeEvent(CountryInfo$country(), {
-          if(CountryInfo$country() == "Nigeria") {
-            indicator <- CountryInfo$svy_indicator_var()
-            year <- CountryInfo$svyYear_selected()
-            file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
-            if(file.exists(file_path)){
-              load(file_path)
-              CountryInfo$svy_analysis_dat(data)
-              
-              load(paste0("data/MICS/NGcluster_", year, ".RData"))
-            } else {
-              showModal(modalDialog(
-                title = "Data for indicator does not exist currently",
-                paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
-                easyClose = TRUE,
-                footer = modalButton("OK")
-              ))
-              geo <- NULL
-            }
+        if(CountryInfo$country() == "Nigeria") {
+          indicator <- CountryInfo$svy_indicator_var()
+          year <- CountryInfo$svyYear_selected()
+          file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
+          if(file.exists(file_path)){
+            load(file_path)
+            CountryInfo$svy_analysis_dat(data)
+            
+            load(paste0("data/MICS/NGcluster_", year, ".RData"))
           } else {
-            if(is.null(input$Svy_dataFile) || is.null(input$Svy_GPSFile)) {
-              showNoFileSelectedModal()
-            }
+            showModal(modalDialog(
+              title = "Data for indicator does not exist currently",
+              paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
+              easyClose = TRUE,
+              footer = modalButton("OK")
+            ))
+            geo <- NULL
           }
+        } else if(is.null(input$Svy_dataFile) || is.null(input$Svy_GPSFile)) {
+          showNoFileSelectedModal()
+          return()
+        }
           
           
-        })
+
         
       } else if (is.null(input$Svy_dataFile)) {
         showNoFileSelectedModal()
@@ -498,34 +580,36 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       svy_year = CountryInfo$svyYear_selected()
       recode_names_list=recode_for_ind_names()
       file_path <- input$Svy_dataFile$datapath
+      gps_path <- input$Svy_GPSFile$datapath
       new_dat_num <- 0
       
       
       ## set survey recode data
       
       if (CountryInfo$MICS_version()) {
-        observeEvent(CountryInfo$country(), {
-          if(CountryInfo$country() == "Nigeria") {
-            session$sendCustomMessage('controlSpinner', list(action = "show",
-                                                             message = paste0("Loading data, please wait ...")))
-            Sys.sleep(1)
-            session$sendCustomMessage('controlSpinner', list(action = "hide"))
-          } else {
-            session$sendCustomMessage('controlSpinner', list(action = "show",
-                                                             message = paste0("Parsing .zip files. Please wait...")))
-            
-            recode_path <- mics_find_recode_path(file_path = file_path,
-                                                 indicator = CountryInfo$svy_indicator_var())
-            recode.data <- suppressWarnings(haven::read_sav(recode_path))
-            recode.data <- as.data.frame(recode.data)
-            
-            
-            analysis_data <- process_mics_data(survey_data = recode.data, 
+        
+        if(CountryInfo$country() == "Nigeria") {
+          session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                           message = paste0("Loading data, please wait ...")))
+          Sys.sleep(1)
+          session$sendCustomMessage('controlSpinner', list(action = "hide"))
+        } else {
+          session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                           message = paste0("Parsing .zip files. Please wait...")))
+          
+          recode_path <- mics_find_recode_path(file_path = file_path,
                                                indicator = CountryInfo$svy_indicator_var())
-            
-            session$sendCustomMessage('controlSpinner', list(action = "hide"))
-          }
-        })
+          recode.data <- suppressWarnings(haven::read_sav(recode_path))
+          recode.data <- as.data.frame(recode.data)
+          
+          
+          analysis_data <- process_mics_data(survey_data = recode.data, 
+                                             indicator = CountryInfo$svy_indicator_var())
+          CountryInfo$svy_analysis_dat(analysis_data)
+          
+          session$sendCustomMessage('controlSpinner', list(action = "hide"))
+        }
+
       } else {
         for (i in 1:length(recode_names_list)){
           session$sendCustomMessage('controlSpinner', list(action = "show",
@@ -576,11 +660,21 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       ## set survey GPS data
       
       if(CountryInfo$MICS_version()) {
+        if(CountryInfo$country() == "Nigeria") {
+          GPS.dat <- geo
+          Sys.sleep(1)
+          CountryInfo$svy_GPS_dat(GPS.dat)
+        } else {
+          session$sendCustomMessage('controlSpinner', list(action = "show",
+                                                           message = paste0( 'Geographic Data',
+                                                                             " found, processing...",
+                                                                             "This may take a few minutes")))
+          GPS.dat <- mics_find_gps_data(file_path = gps_path,country = country)$geo
+          CountryInfo$svy_GPS_dat(GPS.dat)                              
+        }
         
-        GPS.dat <- geo
-        Sys.sleep(1)
         
-        CountryInfo$svy_GPS_dat(GPS.dat)
+        
       } else {
         GPS_prefix <- find_DHS_dat_name(country,svy_year,recode = 'Geographic Data' )
         

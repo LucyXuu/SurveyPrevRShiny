@@ -32,11 +32,10 @@ WORKDIR /srv/shiny-server
 
 COPY renv.lock renv.lock
 COPY renv renv
+COPY . .
 
 RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org')" \
     && R -e "renv::restore(lockfile = '/srv/shiny-server/renv.lock', prompt = FALSE)"
-
-COPY . .
 
 EXPOSE 3838
 

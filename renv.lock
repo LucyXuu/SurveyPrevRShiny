@@ -117,7 +117,7 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "MICSprev",
       "RemoteUsername": "SZ-yang",
-      "RemoteSha": "5060b2644204d531fc56d54560b8fa1d36e9b90f",
+      "RemoteSha": "15cb4cd6afc77bc5741b2d45cebd724a9c597471",
       "Requirements": [
         "SUMMER",
         "countrycode",

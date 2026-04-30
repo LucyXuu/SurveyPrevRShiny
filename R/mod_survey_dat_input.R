@@ -121,6 +121,7 @@ mod_survey_dat_input_ui <- function(id) {
 mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
+    no_input_country <- c("Non")
     
     ###############################################################
     ### change UI layout of data button and file upload content based on MICS_version
@@ -128,7 +129,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     observeEvent(CountryInfo$MICS_version(), {
       if (CountryInfo$MICS_version()){
         observeEvent(CountryInfo$country(), {
-          if(CountryInfo$country() == "Nigeria"){
+          if(CountryInfo$country() %in% no_input_country){
             shinyjs::hide("Svy_dataFile")
             shinyjs::hide("Svy_GPSFile")
             output$data_button <- renderUI({
@@ -182,7 +183,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
           country <- CountryInfo$country()
           svy_year <- CountryInfo$svyYear_selected()
           
-          if (country == "Nigeria") {
+          if (country %in% no_input_country) {
             
             HTML(paste0(
               "<p style='font-size: large;'>",
@@ -518,7 +519,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
     observeEvent(input$upload_Svy_Data, {
       # # Check if a file has been uploaded
       if (CountryInfo$MICS_version()) {
-        if(CountryInfo$country() == "Nigeria") {
+        if(CountryInfo$country() %in% no_input_country) {
           indicator <- CountryInfo$svy_indicator_var()
           year <- CountryInfo$svyYear_selected()
           file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
@@ -588,7 +589,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       
       if (CountryInfo$MICS_version()) {
         
-        if(CountryInfo$country() == "Nigeria") {
+        if(CountryInfo$country() %in% no_input_country) {
           session$sendCustomMessage('controlSpinner', list(action = "show",
                                                            message = paste0("Loading data, please wait ...")))
           Sys.sleep(1)
@@ -660,7 +661,7 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
       ## set survey GPS data
       
       if(CountryInfo$MICS_version()) {
-        if(CountryInfo$country() == "Nigeria") {
+        if(CountryInfo$country() %in% no_input_country) {
           GPS.dat <- geo
           Sys.sleep(1)
           CountryInfo$svy_GPS_dat(GPS.dat)

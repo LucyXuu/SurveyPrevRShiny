@@ -329,6 +329,7 @@ ncluster.map.interactive <-function(gadm.level,
     adm.sf$admin1.name <- adm.sf[[paste0("NAME_",1)]]
     
     if(is.null(cluster.info)){
+      #save(cluster.geo, gadm.list, file = "n.RData")
       cluster.info <- surveyPrev::clusterInfo(geo=cluster.geo,
                                               poly.adm1=gadm.list[[paste0('Admin-',1)]],
                                               poly.adm2=gadm.list[[paste0('Admin-',1)]],

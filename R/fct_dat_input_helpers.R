@@ -35,8 +35,8 @@ mics_find_recode_path <- function(file_path = NULL,
   
   mics_recode_list_abbrev <- c('bh', 'wm', 'ch')
   #print(indicator)
-  required_recode <- recode_list_abbrev[which(ref_tab_mics[ref_tab_mics$ID==indicator,
-                                                           recode_list_abbrev]==T)]
+  required_recode <- mics_recode_list_abbrev[which(ref_tab_mics[ref_tab_mics$ID==indicator,
+                                                                mics_recode_list_abbrev]==T)]
   
   sav_files <- list.files(
     temp,

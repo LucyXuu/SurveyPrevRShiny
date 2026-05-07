@@ -411,8 +411,8 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       }
       
       if(CountryInfo$MICS_version()){
-        country_name_list <- MICS.app.countries
-        updateSelectInput(inputId = "country", choices = c('',country_name_list), selected = "Nigeria")
+        country_name_list <- sort(unique(MICS.survey.meta$CountryName))
+        updateSelectInput(inputId = "country", choices = c('',country_name_list))
       }
       
       
@@ -569,7 +569,7 @@ mod_country_specify_server <- function(id,CountryInfo,AnalysisInfo,parent_sessio
       if(CountryInfo$WHO_version()){
         country_name_list <- WHO.app.countries
       }else if (CountryInfo$MICS_version()){
-        country_name_list <- MICS.app.countries
+        country_name_list <- sort(unique(MICS.survey.meta$CountryName))
       }else {
         country_name_list <- sort(DHS.country.meta[['CountryName']])
       }

@@ -115,22 +115,10 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "MICSprev",
       "RemoteUsername": "SZ-yang",
-      "RemoteSha": "15cb4cd6afc77bc5741b2d45cebd724a9c597471",
-      "Requirements": [
-        "SUMMER",
-        "countrycode",
-        "dplyr",
-        "ggplot2",
-        "haven",
-        "patchwork",
-        "rlang",
-        "sf",
-        "stringr",
-        "surveyPrev"
-      ],
-      "Hash": "ba67408b8d7f30b7bf4d2668b2522a6b"
+      "RemoteRepo": "MICSprev",
+      "RemoteRef": "master",
+      "RemoteSha": "1caba85bb16cfeaa8067a5bbba06233145df7900"
     },
     "Matrix": {
       "Package": "Matrix",

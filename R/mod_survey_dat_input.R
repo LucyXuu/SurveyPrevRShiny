@@ -121,7 +121,10 @@ mod_survey_dat_input_ui <- function(id) {
 mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
-    no_input_country <- c("Non")
+    ### Countries whose MICS data ships preloaded with the app (no upload UI).
+    ### Preload files live in data/MICS/<indicator>_<year>.RData (+ NGcluster_<year>.RData);
+    ### generate them with dev/generate_preload_nigeria.R after adding indicators.
+    no_input_country <- c("Nigeria")
     
     ###############################################################
     ### change UI layout of data button and file upload content based on MICS_version
@@ -522,20 +525,37 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
         if(CountryInfo$country() %in% no_input_country) {
           indicator <- CountryInfo$svy_indicator_var()
           year <- CountryInfo$svyYear_selected()
-          file_path <- paste0("data/MICS/",indicator,"_", year, ".RData")
-          if(file.exists(file_path)){
-            load(file_path)
-            CountryInfo$svy_analysis_dat(data)
-            
-            load(paste0("data/MICS/NGcluster_", year, ".RData"))
+          ind_file <- file.path("data", "MICS", paste0(indicator, "_", year, ".RData"))
+          geo_file <- file.path("data", "MICS", paste0("NGcluster_", year, ".RData"))
+
+          if(file.exists(ind_file) && file.exists(geo_file)){
+            ## Load into private environments and take whatever single object
+            ## each file holds, so the app doesn't depend on the exact name
+            ## the object was saved under.
+            ind_env <- new.env(parent = emptyenv())
+            load(ind_file, envir = ind_env)
+            preload_dat <- get(ls(ind_env)[1], envir = ind_env)
+
+            geo_env <- new.env(parent = emptyenv())
+            load(geo_file, envir = geo_env)
+            geo <- get(ls(geo_env)[1], envir = geo_env)
+
+            ## Accept either the sf cluster-points object itself, or a
+            ## process_geo_mics()-style list that contains it as $geo.
+            if (!inherits(geo, "sf") && is.list(geo) && "geo" %in% names(geo)) {
+              geo <- geo[["geo"]]
+            }
+
+            CountryInfo$svy_analysis_dat(preload_dat)
           } else {
             showModal(modalDialog(
               title = "Data for indicator does not exist currently",
-              paste0("The data for the selected indicator in the year ", year, " is currently unavailable. Please try selecting a different year."),
+              paste0("The preloaded data for the selected indicator in the year ", year,
+                     " is currently unavailable. Please try selecting a different year."),
               easyClose = TRUE,
               footer = modalButton("OK")
             ))
-            geo <- NULL
+            return()
           }
         } else if(is.null(input$Svy_dataFile) || is.null(input$Svy_GPSFile)) {
           showNoFileSelectedModal()

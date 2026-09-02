@@ -103,6 +103,182 @@ ref_tab_mics <- ref_tab_mics[, c(-1)]
 
 
 ###############################################################
+### extend MICS metadata with MICSprev country-specific indicators
+###############################################################
+
+## Fix a pre-existing bug: rows 7 and 18 share the ID "RH_PCCT_C_DY2".
+## Row 7 is the newborn's checkup (PNCNB), row 18 the mother's (PNCMOM).
+## Duplicate IDs break the ID-based lookups in mod_country_specify.R.
+ref_tab_mics$ID[18] <- "RH_PCMN_W_DY2"
+
+## New recode-requirement columns. The original table only knows bh/wm/ch;
+## the new MICSprev indicators also draw on hh, hl, fs and fg recodes.
+ref_tab_mics$hh <- FALSE
+ref_tab_mics$hl <- FALSE
+ref_tab_mics$fs <- FALSE
+ref_tab_mics$fg <- FALSE
+
+## Map app indicator IDs -> MICSprev indicator codes, and record which
+## recode is the *primary* argument of the MICSprev process_*() function.
+## Rows left with NA MICSprev_code have no processing function (preload-only).
+ref_tab_mics$MICSprev_code  <- NA_character_
+ref_tab_mics$primary_recode <- NA_character_
+
+.map_mics <- function(tab, id, code, primary, recodes = primary) {
+  i <- which(tab$ID == id)
+  tab$MICSprev_code[i]  <- code
+  tab$primary_recode[i] <- primary
+  for (rc in recodes) tab[[rc]][i] <- TRUE
+  tab
+}
+
+# Existing rows now covered by MICSprev functions:
+ref_tab_mics <- .map_mics(ref_tab_mics, "RH_ANCN_W_N4P", "ANC",    "wm")
+ref_tab_mics <- .map_mics(ref_tab_mics, "CM_ECMR_C_NNF", "NMR",    "bh")
+ref_tab_mics <- .map_mics(ref_tab_mics, "CH_VACC_C_DP3", "DTP3",   "ch")
+ref_tab_mics <- .map_mics(ref_tab_mics, "CH_VACC_C_DP1", "PENTA1", "ch")  # DTP1 == Penta1 in Nigeria MICS6
+ref_tab_mics <- .map_mics(ref_tab_mics, "RH_ANCN_W_N01", "ANC1",   "wm")
+ref_tab_mics <- .map_mics(ref_tab_mics, "RH_DELA_C_SKP", "SBA",    "wm")
+ref_tab_mics <- .map_mics(ref_tab_mics, "RH_PCCT_C_DY2", "PNCNB",  "wm")
+ref_tab_mics <- .map_mics(ref_tab_mics, "RH_PCMN_W_DY2", "PNCMOM", "wm")
+
+## New Nigeria-only indicators from MICSprev. The app ID is simply the
+## MICSprev code (unique, used only for lookups + preload file names).
+## recodes[1] is the primary recode; any others are the extra recode files
+## the MICSprev function needs (passed by name, e.g. bh=, wm=, hl=, ch=).
+.mk_ind <- function(code, recodes, Topic, Title, Description,
+                    Full_definition = Description) {
+  data.frame(
+    ID = code,
+    ch = "ch" %in% recodes, wm = "wm" %in% recodes, bh = "bh" %in% recodes,
+    hh = "hh" %in% recodes, hl = "hl" %in% recodes, fs = "fs" %in% recodes,
+    fg = "fg" %in% recodes,
+    notNGExclusive  = FALSE,          # Nigeria-only: hidden for other countries
+    Description     = Description,
+    Full_definition = Full_definition,
+    Topic = Topic, Title = Title,
+    MICSprev_code  = code,
+    primary_recode = recodes[1],
+    stringsAsFactors = FALSE
+  )
+}
+
+.t_cp   <- "Chapter 08 - Protected: Child protection"
+.t_ed   <- "Chapter 09 - Learn: Education and learning"
+.t_nt   <- "Chapter 07 - Thrive: Child health, nutrition and development"
+.t_wash <- "Chapter 10 - Live in a safe and clean environment: WASH"
+.t_sp   <- "Chapter 11 - Equitable chance in life: Social policy"
+
+ref_tab_mics_new <- rbind(
+  # --- Child Protection ---
+  .mk_ind("BIRTHREG",      "ch",              .t_cp, "Child Protection",
+          "Children under 5 whose birth is registered",
+          "Percentage of children under age 5 whose birth is registered with civil authorities"),
+  .mk_ind("CHILDMARRIAGE", "wm",              .t_cp, "Child Protection",
+          "Women age 20-24 first married or in union before age 18",
+          "Percentage of women age 20-24 years who were first married or in union before age 18"),
+  .mk_ind("CHILDLABOUR",   "fs",              .t_cp, "Child Protection",
+          "Children age 5-17 engaged in child labour",
+          "Percentage of children age 5-17 years engaged in child labour (economic activities and/or household chores above age-specific thresholds)"),
+  .mk_ind("CHILDLABOURHAZ", "fs",             .t_cp, "Child Protection",
+          "Children age 5-17 working under hazardous conditions",
+          "Percentage of children age 5-17 years working under hazardous conditions"),
+  .mk_ind("FGMDAUGHTER",   c("fg","bh","wm"), .t_cp, "Child Protection",
+          "Daughters age 0-14 who have undergone FGM",
+          "Percentage of daughters age 0-14 years who have undergone any form of female genital mutilation, as reported by mothers age 15-49"),
+
+  # --- Education ---
+  .mk_ind("OOSPRIMARY",   "hl", .t_ed, "Education",
+          "Children of primary school age out of school",
+          "Percentage of children of primary school age currently not attending early childhood education, primary or secondary school (out-of-school rate)"),
+  .mk_ind("OOSSECONDARY", "hl", .t_ed, "Education",
+          "Adolescents of secondary school age out of school",
+          "Percentage of adolescents of secondary school age currently not attending primary or secondary school (out-of-school rate)"),
+  .mk_ind("READING",      "fs", .t_ed, "Education",
+          "Children age 7-14 with foundational reading skills",
+          "Percentage of children age 7-14 years who demonstrate foundational reading skills"),
+  .mk_ind("MATH",         "fs", .t_ed, "Education",
+          "Children age 7-14 with foundational numeracy skills",
+          "Percentage of children age 7-14 years who demonstrate foundational numeracy skills"),
+  .mk_ind("NETINTAKE",    "hl", .t_ed, "Education",
+          "Children of primary entry age entering grade 1 (net intake rate)",
+          "Percentage of children of primary school entry age entering the first grade of primary school (net intake rate)"),
+  .mk_ind("PRIMARYCOMPL", "hl", .t_ed, "Education",
+          "Primary school completion rate",
+          "Percentage of children age 3-5 years above primary graduation age who have completed primary school"),
+  .mk_ind("LOWSECCOMPL",  "hl", .t_ed, "Education",
+          "Lower secondary school completion rate",
+          "Percentage of adolescents age 3-5 years above lower secondary graduation age who have completed lower secondary school"),
+  .mk_ind("UPSECCOMPL",   "hl", .t_ed, "Education",
+          "Upper secondary school completion rate",
+          "Percentage of young people age 3-5 years above upper secondary graduation age who have completed upper secondary school"),
+
+  # --- Nutrition ---
+  .mk_ind("EBF",           "ch", .t_nt, "Nutrition",
+          "Infants under 6 months exclusively breastfed",
+          "Percentage of infants under 6 months of age who are exclusively breastfed"),
+  .mk_ind("VITA",          "ch", .t_nt, "Nutrition",
+          "Children age 6-59 months who received vitamin A supplementation",
+          "Percentage of children age 6-59 months who received a vitamin A dose in the 6 months preceding the survey"),
+  .mk_ind("APPROPBF",      "ch", .t_nt, "Nutrition",
+          "Children age 0-23 months appropriately breastfed",
+          "Percentage of children age 0-23 months appropriately breastfed for their age"),
+  .mk_ind("MINACCEPTDIET", "ch", .t_nt, "Nutrition",
+          "Children age 6-23 months with minimum acceptable diet",
+          "Percentage of children age 6-23 months who received a minimum acceptable diet"),
+  .mk_ind("FOODINSEC",     "hh", .t_nt, "Nutrition",
+          "Household population with moderate or severe food insecurity",
+          "Percentage of household population living in households with moderate or severe food insecurity"),
+
+  # --- WASH ---
+  .mk_ind("BASICWATER", "hh", .t_wash, "Water and Sanitation",
+          "Population using basic drinking water services",
+          "Percentage of household population using improved drinking water sources within 30 minutes round trip (basic service)"),
+  .mk_ind("BASICSAN",   "hh", .t_wash, "Water and Sanitation",
+          "Population using basic sanitation services",
+          "Percentage of household population using improved sanitation facilities not shared with other households (basic service)"),
+  .mk_ind("OPENDEF",    "hh", .t_wash, "Water and Sanitation",
+          "Population practising open defecation",
+          "Percentage of household population practising open defecation"),
+  .mk_ind("WATERSUFF",  "hh", .t_wash, "Water and Sanitation",
+          "Population with sufficient drinking water when needed",
+          "Percentage of household population able to obtain drinking water in sufficient quantities when needed"),
+  .mk_ind("MENSTRUAL",  "wm", .t_wash, "Water and Sanitation",
+          "Women with appropriate menstrual hygiene",
+          "Percentage of women age 15-49 using appropriate menstrual hygiene materials with a private place to wash and change"),
+
+  # --- Social Policy ---
+  .mk_ind("HANDWASH",    "hh",           .t_sp, "Social Policy",
+          "Population with handwashing facility with water and soap",
+          "Percentage of household population with a handwashing facility on premises where water and soap or detergent are present"),
+  .mk_ind("FUNCDIFF517", "fs",           .t_sp, "Social Policy",
+          "Children age 5-17 with functional difficulty",
+          "Percentage of children age 5-17 years with functional difficulty in at least one domain"),
+  .mk_ind("FUNCDIFF217", c("fs","ch"),   .t_sp, "Social Policy",
+          "Children age 2-17 with functional difficulty",
+          "Percentage of children age 2-17 years with functional difficulty in at least one domain"),
+  .mk_ind("HEALTHINS",   "ch",           .t_sp, "Social Policy",
+          "Children under 5 covered by health insurance",
+          "Percentage of children under age 5 covered by health insurance"),
+  .mk_ind("SOCTRANSFER", c("hh","hl"),   .t_sp, "Social Policy",
+          "Household members receiving social transfers",
+          "Percentage of household members living in households that received any type of social transfer or benefit"),
+  .mk_ind("BANKACCT",    "wm",           .t_sp, "Social Policy",
+          "Women age 15-49 with a bank account",
+          "Percentage of women age 15-49 years who have an account at a bank or other financial institution"),
+  .mk_ind("BORROWED",    "wm",           .t_sp, "Social Policy",
+          "Women who borrowed money in the past year",
+          "Percentage of women age 15-49 years who borrowed money in the 12 months preceding the survey")
+)
+
+## Combine (align column order first) and clean up helpers.
+## Note: Chap_abbrev is intentionally dropped here; it is not used anywhere
+## outside this file.
+ref_tab_mics <- rbind(ref_tab_mics[, names(ref_tab_mics_new)], ref_tab_mics_new)
+rm(ref_tab_mics_new, .mk_ind, .map_mics, .t_cp, .t_ed, .t_nt, .t_wash, .t_sp)
+
+
+###############################################################
 ### load DHS meta data
 ###############################################################
 

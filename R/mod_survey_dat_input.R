@@ -598,14 +598,47 @@ mod_survey_dat_input_server <- function(id,CountryInfo,AnalysisInfo){
           session$sendCustomMessage('controlSpinner', list(action = "show",
                                                            message = paste0("Parsing .zip files. Please wait...")))
           
-          recode_path <- mics_find_recode_path(file_path = file_path,
-                                               indicator = CountryInfo$svy_indicator_var())
-          recode.data <- suppressWarnings(haven::read_sav(recode_path))
-          recode.data <- as.data.frame(recode.data)
+          recode_paths <- mics_find_recode_path(file_path = file_path,
+                                                indicator = CountryInfo$svy_indicator_var())
           
+          if (is.null(recode_paths) || anyNA(recode_paths)) {
+            session$sendCustomMessage('controlSpinner', list(action = "hide"))
+            missing_rc <- if (is.null(recode_paths)) character(0)
+                          else names(recode_paths)[is.na(recode_paths)]
+            showModal(modalDialog(
+              title = "Required recode file(s) not found",
+              paste0("The uploaded .zip does not contain the recode file(s) needed for ",
+                     "this indicator",
+                     if (length(missing_rc) > 0) paste0(" (missing: ",
+                          paste0(missing_rc, ".sav", collapse = ", "), ")"),
+                     ". Please upload the full MICS dataset zip for this survey."),
+              easyClose = TRUE, footer = modalButton("OK")
+            ))
+            return()
+          }
           
-          analysis_data <- process_mics_data(survey_data = recode.data, 
-                                             indicator = CountryInfo$svy_indicator_var())
+          recode_data_list <- lapply(recode_paths, function(p) {
+            as.data.frame(suppressWarnings(haven::read_sav(p)))
+          })
+          names(recode_data_list) <- names(recode_paths)
+          
+          analysis_data <- tryCatch(
+            process_mics_data(recode_data_list = recode_data_list,
+                              indicator = CountryInfo$svy_indicator_var(),
+                              country   = CountryInfo$country()),
+            error = function(e) {
+              session$sendCustomMessage('controlSpinner', list(action = "hide"))
+              showModal(modalDialog(
+                title = "Indicator processing failed",
+                paste0("MICSprev could not compute this indicator from the uploaded ",
+                       "data: ", conditionMessage(e)),
+                easyClose = TRUE, footer = modalButton("OK")
+              ))
+              NULL
+            }
+          )
+          if (is.null(analysis_data)) return()
+          
           CountryInfo$svy_analysis_dat(analysis_data)
           
           session$sendCustomMessage('controlSpinner', list(action = "hide"))

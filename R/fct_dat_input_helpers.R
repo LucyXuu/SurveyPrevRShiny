@@ -28,15 +28,31 @@ get_survey_year <- function(country=NULL, DHS = TRUE){
 }
 
 ###
+## Find ALL recode .sav files an indicator needs inside the uploaded MICS zip.
+## Returns a named character vector, e.g. c(fg = ".../fg.sav", bh = ".../bh.sav",
+## wm = ".../wm.sav"), ordered with the primary recode first. Missing recodes
+## come back as NA entries (caller checks anyNA); returns NULL if the zip has
+## no .sav files at all or the indicator requires no recodes.
 mics_find_recode_path <- function(file_path = NULL,
                                   indicator = NULL) {
   temp <- tempfile()
   unzip(file_path, exdir = temp)
   
-  mics_recode_list_abbrev <- c('bh', 'wm', 'ch')
-  #print(indicator)
-  required_recode <- mics_recode_list_abbrev[which(ref_tab_mics[ref_tab_mics$ID==indicator,
-                                                                mics_recode_list_abbrev]==T)]
+  mics_recode_list_abbrev <- c('bh', 'wm', 'ch', 'hh', 'hl', 'fs', 'fg')
+  
+  ind_row <- ref_tab_mics[ref_tab_mics$ID == indicator, , drop = FALSE][1, ]
+  
+  required_recode <- mics_recode_list_abbrev[
+    vapply(mics_recode_list_abbrev, function(rc) isTRUE(ind_row[[rc]]), logical(1))
+  ]
+  
+  # primary recode first, so downstream can rely on the order
+  primary <- ind_row$primary_recode
+  if (!is.na(primary) && primary %in% required_recode) {
+    required_recode <- c(primary, setdiff(required_recode, primary))
+  }
+  
+  if (length(required_recode) == 0) return(NULL)
   
   sav_files <- list.files(
     temp,
@@ -45,23 +61,48 @@ mics_find_recode_path <- function(file_path = NULL,
     full.names = TRUE,
     ignore.case = TRUE
   )
-  
   if (length(sav_files) == 0) return(NULL)
-  pattern <- paste0("^", required_recode, "\\.sav$")
-  matched <- sav_files[grepl(pattern, basename(sav_files), ignore.case = TRUE)]
-  if (length(matched) == 0) return(NULL)
-  return(matched[1])
+  
+  paths <- vapply(required_recode, function(rc) {
+    matched <- sav_files[grepl(paste0("^", rc, "\\.sav$"),
+                               basename(sav_files), ignore.case = TRUE)]
+    if (length(matched) == 0) NA_character_ else matched[1]
+  }, character(1))
+  
+  paths   # NA entries mark recodes missing from the zip; caller checks anyNA()
 }
 
-process_mics_data <- function(survey_data = NULL,
-                              indicator = NULL) {
-  if(indicator == "RH_ANCN_W_N4P") {
-    return(MICSprev::process_ANC(survey_data))
-  } else if(indicator == "CM_ECMR_C_NNF") {
-    return(MICSprev::process_NMR(survey_data))
-  } else if(indicator == "CH_VACC_C_DP3") {
-    return(MICSprev::process_DTP3(survey_data))
+## Process uploaded MICS recode data into the standardized analysis dataset
+## via MICSprev's unified dispatcher.
+##
+## recode_data_list: named list of data.frames keyed by recode abbreviation
+##                   (e.g. list(fg = ..., bh = ..., wm = ...)), primary first.
+## indicator:        the app indicator ID (ref_tab_mics$ID).
+## country:          country name, required for Nigeria-only indicators.
+process_mics_data <- function(recode_data_list = NULL,
+                              indicator = NULL,
+                              country = NULL) {
+  
+  ind_row <- ref_tab_mics[ref_tab_mics$ID == indicator, , drop = FALSE][1, ]
+  code    <- ind_row$MICSprev_code
+  
+  if (is.na(code)) {
+    stop("No MICSprev processing function is available for indicator '",
+         indicator, "'. This indicator is only available via preloaded data.",
+         call. = FALSE)
   }
+  
+  primary <- ind_row$primary_recode
+  extras  <- recode_data_list[setdiff(names(recode_data_list), primary)]
+  
+  do.call(
+    MICSprev::process_indicator,
+    c(list(data      = recode_data_list[[primary]],
+           indicator = code,
+           country   = country),
+      extras)   # extra recodes arrive named (bh=, wm=, hl=, ch=), matching
+                # the parameter names of the underlying process_*() functions
+  )
 }
 
 mics_find_gps_data <- function(file_path = NULL,

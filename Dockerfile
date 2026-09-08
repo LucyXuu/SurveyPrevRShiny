@@ -48,8 +48,9 @@ COPY renv renv
 RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org')"
 RUN --mount=type=secret,id=github_token \
     export GITHUB_PAT="$(cat /run/secrets/github_token 2>/dev/null || true)" \
-    && R -e "options(renv.config.repos.override = getOption('repos')); renv::restore(lockfile = '/srv/shiny-server/renv.lock', exclude = 'INLA', prompt = FALSE)" \
-    && R -e "options(timeout = 600); install.packages('INLA', repos = c(INLA = 'https://inla.r-inla-download.org/R/testing', getOption('repos')), type = 'source')"
+    && R -e "cat('repos in use:\n'); print(getOption('repos'))" \
+    && R -e "options(renv.config.repos.override = c(CRAN = 'https://packagemanager.posit.co/cran/__linux__/noble/latest')); renv::restore(lockfile = '/srv/shiny-server/renv.lock', exclude = 'INLA', prompt = FALSE)" \
+    && R -e "options(timeout = 600); install.packages('INLA', repos = c(INLA = 'https://inla.r-inla-download.org/R/testing', CRAN = 'https://packagemanager.posit.co/cran/__linux__/noble/latest'), type = 'source')"
 
 COPY . .
 

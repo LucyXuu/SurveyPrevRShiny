@@ -1,4 +1,4 @@
-FROM rocker/shiny:4.4
+FROM rocker/shiny:4.5.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfribidi-dev \
     libgdal-dev \
     libgeos-dev \
+    libgit2-dev \
     libglpk40 \
     libharfbuzz-dev \
     libjpeg-dev \
@@ -32,13 +33,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /srv/shiny-server
 
+## Restore packages BEFORE copying the rest of the app, so the (slow) package
+## layer is cached and only rebuilds when renv.lock changes.
 COPY renv.lock renv.lock
 COPY renv renv
-COPY . .
 
-RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org')" \
-    && R -e "renv::restore(lockfile = '/srv/shiny-server/renv.lock',exclude = 'INLA', prompt = FALSE)"\
-    && R -e "install.packages('INLA', repos = c(INLA = 'https://inla.r-inla-download.org/R/testing', CRAN = 'https://packagemanager.posit.co/cran/latest'), type = 'source')"
+## - repos.override: install from the image's default repositories (rocker
+##   points these at Posit Package Manager Linux *binaries*), instead of the
+##   source-package CRAN URLs recorded in the lockfile. This makes the restore
+##   fast and avoids compilation failures of pinned old versions.
+## - GITHUB_PAT (BuildKit secret): authenticates GitHub downloads (MICSprev
+##   etc.) so CI builds don't die on GitHub API rate limits.
+## - INLA is excluded from restore and installed from its own repository.
+RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org')"
+RUN --mount=type=secret,id=github_token \
+    export GITHUB_PAT="$(cat /run/secrets/github_token 2>/dev/null || true)" \
+    && R -e "options(renv.config.repos.override = getOption('repos')); renv::restore(lockfile = '/srv/shiny-server/renv.lock', exclude = 'INLA', prompt = FALSE)" \
+    && R -e "options(timeout = 600); install.packages('INLA', repos = c(INLA = 'https://inla.r-inla-download.org/R/testing', getOption('repos')), type = 'source')"
+
+COPY . .
 
 EXPOSE 3838
 

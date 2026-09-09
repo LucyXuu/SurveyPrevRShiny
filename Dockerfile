@@ -37,6 +37,7 @@ WORKDIR /srv/shiny-server
 ## layer is cached and only rebuilds when renv.lock changes.
 COPY renv.lock renv.lock
 COPY renv renv
+COPY .Rprofile .Rprofile
 
 ## - repos.override: install from the image's default repositories (rocker
 ##   points these at Posit Package Manager Linux *binaries*), instead of the
@@ -47,12 +48,20 @@ COPY renv renv
 ## - INLA is excluded from restore and installed from its own repository.
 RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org')"
 RUN --mount=type=secret,id=github_token \
-    export GITHUB_PAT="$(cat /run/secrets/github_token 2>/dev/null || true)" \
+    if [ -s /run/secrets/github_token ]; then \
+        export GITHUB_PAT="$(cat /run/secrets/github_token)"; \
+    fi \
     && R -e "cat('repos in use:\n'); print(getOption('repos'))" \
     && R -e "options(renv.config.repos.override = c(CRAN = 'https://packagemanager.posit.co/cran/__linux__/noble/latest')); renv::restore(lockfile = '/srv/shiny-server/renv.lock', exclude = 'INLA', prompt = FALSE)" \
     && R -e "options(timeout = 600); install.packages('INLA', repos = c(INLA = 'https://inla.r-inla-download.org/R/testing', CRAN = 'https://packagemanager.posit.co/cran/__linux__/noble/latest'), type = 'source')"
 
-COPY . .
+# Keep the restored project library from the cached dependency layer.
+COPY --exclude=renv . .
+
+# Match the library used during the dependency restore.  With DESCRIPTION
+# present, renv otherwise treats this as a package project and selects a
+# different user-cache library at runtime.
+ENV RENV_PATHS_LIBRARY=/srv/shiny-server/renv/library
 
 EXPOSE 3838
 

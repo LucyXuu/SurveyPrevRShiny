@@ -2114,7 +2114,7 @@
     },
     "plotly": {
       "Package": "plotly",
-      "Version": "4.10.4",
+      "Version": "4.12.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2141,8 +2141,7 @@
         "tools",
         "vctrs",
         "viridisLite"
-      ],
-      "Hash": "a1ac5c03ad5ad12b9d1597e00e23c3dd"
+      ]
     },
     "plyr": {
       "Package": "plyr",

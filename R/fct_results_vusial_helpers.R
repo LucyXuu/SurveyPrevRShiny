@@ -1869,15 +1869,29 @@ scatter.plot <- function(res.obj.x,
   
   ### make the plot interactive
   
-  interactive.plot <- plotly::ggplotly(static.plot,
-                                       tooltip = "text",height = 400, width = 500)%>%
-    plotly::layout(margin= list(
-      l = 80,
-      r = 80,
-      b = 20,
-      t = 20,
-      pad = 4
-    ))
+  ### note: plotly (< 4.11.0) cannot convert ggplot2 (>= 4.0.0) objects and
+  ### fails with an uninformative 'subscript out of bounds' error, so we
+  ### catch conversion failures and re-throw with an actionable message.
+  interactive.plot <- tryCatch({
+    plotly::ggplotly(static.plot,
+                     tooltip = "text",height = 400, width = 500)%>%
+      plotly::layout(margin= list(
+        l = 80,
+        r = 80,
+        b = 20,
+        t = 20,
+        pad = 4
+      ))
+  }, error = function(e){
+    stop(paste0(
+      "Unable to convert the scatter plot to an interactive figure (",
+      conditionMessage(e),
+      "). This is usually caused by a plotly/ggplot2 version incompatibility: ",
+      "plotly >= 4.11.0 is required when ggplot2 >= 4.0.0 is installed ",
+      "(installed: plotly ", as.character(utils::packageVersion("plotly")),
+      ", ggplot2 ", as.character(utils::packageVersion("ggplot2")), ")."
+    ), call. = FALSE)
+  })
   
   
   return(interactive.plot)
